@@ -34,3 +34,17 @@ std::vector<float> NeuralNetwork::feedforward(const std::vector<float>& input) c
 void NeuralNetwork::propagateBackwards(const std::vector<float>& input, const std::vector<float>& target,
 		float learningRate) {
 }
+
+
+float NeuralNetwork::error(const std::vector<float>& output, const std::vector<float>& expected) {
+	if (output.size() != expected.size()) {
+		throw std::length_error("Vector length mismatch");
+	}
+
+	float err {0};
+
+	for (size_t i {0}; i < output.size(); ++i) {
+		err += static_cast<float>(std::pow(output[i] - expected[i], 2));
+	}
+	return err;
+}

@@ -29,7 +29,7 @@ public:
 
 	explicit operator std::vector<float>() const;
 
-//protected:
+protected:
 	std::vector<std::vector<float>> _values;
 	size_t _w;
 	size_t _h;
