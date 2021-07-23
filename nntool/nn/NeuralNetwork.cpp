@@ -5,9 +5,18 @@
 #include "NeuralNetwork.h"
 
 
-NeuralNetwork::NeuralNetwork(unsigned int* topology, float learningRate):
+NeuralNetwork::NeuralNetwork(std::vector<unsigned int> topology, float learningRate):
+		_topology {topology},
 		_learningRate {learningRate} {
-	while (*topology) {
-		++topology;
+	for (auto it {++topology.begin()}; it != topology.end(); ++it) {
+		std::vector<float> biases {};
+		biases.resize(*(it - 1));
+		_biases.push_back(biases);
+		_weights.emplace_back(*(it - 1), *it);
 	}
+}
+
+
+std::vector<float> NeuralNetwork::feedforward(const std::vector<float>& input) const {
+	return {};
 }
