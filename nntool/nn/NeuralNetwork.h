@@ -16,8 +16,13 @@ public:
 	explicit NeuralNetwork(std::vector<size_t> topology);
 
 	std::vector<float> feedforward(const std::vector<float>& input) const;
+
 	void propagateBackwards(const std::vector<float>& input,
-			const std::vector<float>& target, float learningRate);
+			const std::vector<float>& target, float eta = 0.005);
+
+	void train(const std::vector<std::vector<float>>& inputs,
+			const std::vector<std::vector<float>>& outputs,
+			size_t epochs = 1, float eta = 0.005);
 
 	static float error(const std::vector<float>& output,
 			const std::vector<float>& expected);

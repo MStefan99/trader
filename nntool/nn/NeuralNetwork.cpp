@@ -36,6 +36,18 @@ void NeuralNetwork::propagateBackwards(const std::vector<float>& input, const st
 }
 
 
+void NeuralNetwork::train(const std::vector<std::vector<float>>& inputs, const std::vector<std::vector<float>>& outputs,
+		size_t epochs, float eta) {
+	if (inputs.size() != outputs.size()) {
+		throw std::length_error("Input size does not equal output size");
+	}
+
+	for (size_t i {0}; i < epochs; ++i) {
+		propagateBackwards(inputs[i], outputs[i], eta);
+	}
+}
+
+
 float NeuralNetwork::error(const std::vector<float>& output, const std::vector<float>& expected) {
 	if (output.size() != expected.size()) {
 		throw std::length_error("Vector length mismatch");
