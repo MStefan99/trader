@@ -6,27 +6,33 @@
 #define TRADER_MATRIX_H
 
 #include <vector>
+#include <stdexcept>
 
 
 class Matrix {
 public:
-	explicit Matrix(unsigned int w = 1, unsigned int h = 1);
+	explicit Matrix(size_t w = 1, size_t h = 1);
+	explicit Matrix(const std::vector<float>& vector);
 
-	std::vector<float>& operator[](unsigned int i);
+	std::vector<float>& operator[](size_t i);
 
 	Matrix transpose() const;
 
 	Matrix operator*(float scalar) const;
 	Matrix operator*(const Matrix& matrix) const;
+	Matrix operator*(const std::vector<float>& vector) const;
 	Matrix operator+(const Matrix& matrix) const;
+	Matrix operator+(const std::vector<float>& vector) const;
 	Matrix multiplyComponents(const Matrix& matrix) const;
 
 	Matrix concat(const Matrix& matrix) const;
 
-protected:
+	explicit operator std::vector<float>() const;
+
+//protected:
 	std::vector<std::vector<float>> _values;
-	unsigned int _w;
-	unsigned int _h;
+	size_t _w;
+	size_t _h;
 };
 
 #endif //TRADER_MATRIX_H

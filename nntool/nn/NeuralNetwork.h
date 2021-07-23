@@ -12,15 +12,16 @@
 
 class NeuralNetwork {
 public:
-	explicit NeuralNetwork(std::vector<unsigned int> topology, float learningRate = 0.0005);
+	explicit NeuralNetwork(std::vector<size_t> topology);
 
 	std::vector<float> feedforward(const std::vector<float>& input) const;
+	void propagateBackwards(const std::vector<float>& input,
+			const std::vector<float>& target, float learningRate);
 
-protected:
+//protected:
 	std::vector<Matrix> _weights;
 	std::vector<std::vector<float>> _biases;
-	std::vector<unsigned int> _topology;
-	float _learningRate;
+	std::vector<size_t> _topology;
 };
 
 #endif //TRADER_NEURALNETWORK_H
