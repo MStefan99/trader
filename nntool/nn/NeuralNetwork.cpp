@@ -52,7 +52,7 @@ void NeuralNetwork::propagateBackwards(const std::vector<float>& input,
 		error = _weights[_topology.size() - i].transpose() * error;
 
 		_biases[_topology.size() - i] += error * eta;
-		_weights[_topology.size() - i] += activations[_topology.size() - i].transpose() * prevError * eta;
+		_weights[_topology.size() - i] += prevError * activations[_topology.size() - i].transpose() * eta;
 	}
 }
 
@@ -74,7 +74,7 @@ Matrix NeuralNetwork::errorVector(const Matrix& actual, const Matrix& expected) 
 		throw std::length_error("Vector length mismatch");
 	}
 
-	Matrix result {actual.getHeight(), 1};
+	Matrix result {1, actual.getHeight()};
 	for (size_t i {0}; i < actual.getHeight(); ++i) {
 		result[i][0] = actual[i][0] - expected[i][0];
 	}

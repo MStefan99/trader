@@ -15,7 +15,19 @@ Matrix::Matrix(size_t w, size_t h):
 		std::vector<float> v {};
 		for (size_t i {0}; i < w; ++i) {
 //			v.push_back(distribution(generator));
-				v.push_back(1);
+			v.push_back(1);
+		}
+		_values.push_back(v);
+	}
+}
+
+
+Matrix::Matrix(const std::initializer_list<std::initializer_list<float>>& values):
+		_w {values.begin()->size()}, _h {values.size()} {
+	for (const auto& row : values) {
+		std::vector<float> v {};
+		for (auto value: row) {
+			v.push_back(value);
 		}
 		_values.push_back(v);
 	}
@@ -101,7 +113,7 @@ Matrix Matrix::operator*(const std::vector<float>& vector) const {
 }
 
 
-Matrix& Matrix::operator*=(float scalar){
+Matrix& Matrix::operator*=(float scalar) {
 	for (size_t j {0}; j < _h; ++j) {
 		for (size_t i {0}; i < _w; ++i) {
 			_values[j][i] = _values[j][i] * scalar;
@@ -129,7 +141,7 @@ Matrix& Matrix::operator*=(const Matrix& matrix) {
 }
 
 
-Matrix& Matrix::operator*=(const std::vector<float>& vector){
+Matrix& Matrix::operator*=(const std::vector<float>& vector) {
 	if (vector.size() == 1) {
 		return operator*=(vector[0]);
 	} else if (_w != 1) {

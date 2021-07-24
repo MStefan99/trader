@@ -14,6 +14,7 @@ class Matrix {
 public:
 	explicit Matrix(size_t w = 1, size_t h = 1);
 	explicit Matrix(const std::vector<float>& vector);
+	Matrix(const std::initializer_list<std::initializer_list<float>>& list);
 
 	std::vector<float>& operator[](size_t i);
 	const std::vector<float>& operator[](size_t i) const;

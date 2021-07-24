@@ -16,7 +16,7 @@ int main() {
 		std::vector<float> input {a, b};
 		std::vector<float> output {3 * (a + 2) + 2 * (b + 8) + 5};
 
-		nn.propagateBackwards(input, output);
+		nn.propagateBackwards(input, output, 0.001);
 	}
 
 	for (size_t i {0}; i < 50; ++i) {
