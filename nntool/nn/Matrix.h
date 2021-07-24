@@ -22,6 +22,8 @@ public:
 	Matrix transpose() const;
 
 	Matrix operator*(float scalar) const;
+	Matrix operator/(float scalar) const;
+
 	Matrix operator*(const Matrix& matrix) const;
 	Matrix operator*(const std::vector<float>& vector) const;
 

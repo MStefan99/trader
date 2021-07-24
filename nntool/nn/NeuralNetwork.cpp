@@ -51,8 +51,9 @@ void NeuralNetwork::propagateBackwards(const std::vector<float>& input,
 		auto prevError {error};
 		error = _weights[_topology.size() - i].transpose() * error;
 
-		_biases[_topology.size() - i] += error * eta;
-		_weights[_topology.size() - i] += prevError * activations[_topology.size() - i].transpose() * eta;
+		_biases[_topology.size() - i] += error * (eta / static_cast<float>(error.getHeight()));
+		_weights[_topology.size() - i] += prevError * activations[_topology.size() - i].transpose() *
+				(eta / static_cast<float>(prevError.getHeight()));
 	}
 }
 

@@ -7,15 +7,14 @@
 
 Matrix::Matrix(size_t w, size_t h):
 		_w {w}, _h {h} {
-//	std::random_device randomDevice;
-//	std::mt19937 generator(randomDevice());
-//	std::uniform_real_distribution<float> distribution {-1.0, 1.0};
+	std::random_device randomDevice;
+	std::mt19937 generator(randomDevice());
+	std::uniform_real_distribution<float> distribution {-.1, .1};
 
 	for (size_t j {0}; j < h; ++j) {
 		std::vector<float> v {};
 		for (size_t i {0}; i < w; ++i) {
-//			v.push_back(distribution(generator));
-			v.push_back(1);
+			v.push_back(distribution(generator));
 		}
 		_values.push_back(v);
 	}
@@ -70,6 +69,18 @@ Matrix Matrix::operator*(float scalar) const {
 	for (size_t j {0}; j < _h; ++j) {
 		for (size_t i {0}; i < _w; ++i) {
 			result[j][i] = _values[j][i] * scalar;
+		}
+	}
+	return result;
+}
+
+
+Matrix Matrix::operator/(float scalar) const {
+	Matrix result {_w, _h};
+
+	for (size_t j {0}; j < _h; ++j) {
+		for (size_t i {0}; i < _w; ++i) {
+			result[j][i] = _values[j][i] / scalar;
 		}
 	}
 	return result;
