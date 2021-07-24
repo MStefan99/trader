@@ -3,7 +3,10 @@ project(trader)
 
 set(CMAKE_CXX_STANDARD 20)
 
-#add_subdirectory(lib/eigen-3.3.9)
+if (${CMAKE_CXX_COMPILER} MATCHES "clang-cl")
+	add_compile_options(/EHs)
+endif ()
+
 add_subdirectory(nn)
 
 add_executable(trader main.cpp)
