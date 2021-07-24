@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <stdexcept>
+#include <random>
 
 
 class Matrix {
@@ -15,19 +16,31 @@ public:
 	explicit Matrix(const std::vector<float>& vector);
 
 	std::vector<float>& operator[](size_t i);
+	const std::vector<float>& operator[](size_t i) const;
 
 	Matrix transpose() const;
 
 	Matrix operator*(float scalar) const;
 	Matrix operator*(const Matrix& matrix) const;
 	Matrix operator*(const std::vector<float>& vector) const;
+
+	Matrix& operator*=(float scalar) ;
+	Matrix& operator*=(const Matrix& matrix) ;
+	Matrix& operator*=(const std::vector<float>& vector) ;
+
 	Matrix operator+(const Matrix& matrix) const;
 	Matrix operator+(const std::vector<float>& vector) const;
-	Matrix multiplyComponents(const Matrix& matrix) const;
 
+	Matrix& operator+=(const Matrix& matrix);
+	Matrix& operator+=(const std::vector<float>& vector);
+
+	Matrix multiplyComponents(const Matrix& matrix) const;
 	Matrix concat(const Matrix& matrix) const;
 
 	explicit operator std::vector<float>() const;
+
+	size_t getWidth() const;
+	size_t getHeight() const;
 
 protected:
 	std::vector<std::vector<float>> _values;

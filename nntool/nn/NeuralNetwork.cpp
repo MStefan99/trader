@@ -7,32 +7,53 @@
 
 NeuralNetwork::NeuralNetwork(std::vector<size_t> topology):
 		_topology {topology} {
-	for (auto it {++topology.begin()}; it != topology.end(); ++it) {
+	for (auto it {topology.begin()}; it != topology.end(); ++it) {
 		std::vector<float> biases {};
-		biases.resize(*(it - 1));
-		_biases.push_back(biases);
+		biases.resize(*it);
+		_biases.emplace_back(biases);
+	}
+
+	for (auto it {++topology.begin()}; it != topology.end(); ++it) {
 		_weights.emplace_back(*(it - 1), *it);
 	}
 }
 
 
 std::vector<float> NeuralNetwork::feedforward(const std::vector<float>& input) const {
-	Matrix activations {input};
+	Matrix activation {input};
 
-	for (size_t i {0}; i < _topology.size(); ++i) {
-		if (i > 0) {
-			activations = _weights[i - 1] * activations;
-		}
-		if (i < _biases.size()) {
-			activations = activations + _biases[i];
-		}
+	activation = activation + _biases[0];
+	for (size_t i {1}; i < _topology.size(); ++i) {
+		activation = _weights[i - 1] * activation;
+		activation = activation + _biases[i];
 	}
-	return static_cast<std::vector<float>>(activations);
+	return static_cast<std::vector<float>>(activation);
 }
 
 
-void NeuralNetwork::propagateBackwards(const std::vector<float>& input, const std::vector<float>& target,
-		float learningRate) {
+void NeuralNetwork::propagateBackwards(const std::vector<float>& input,
+		const std::vector<float>& expected, float eta) {
+	std::vector<Matrix> activations {};
+	Matrix activation {input};
+
+	activation = activation + _biases[0];
+	activations.push_back(activation);
+	for (size_t i {1}; i < _topology.size(); ++i) {
+		activation = _weights[i - 1] * activation;
+		activation = activation + _biases[i];
+		activations.push_back(activation);
+	}
+
+	auto error {errorVector(Matrix {expected}, activations.back())};
+	_biases[_topology.size() - 1] = error * eta;
+
+	for (size_t i {2}; i <= _topology.size(); ++i) {
+		auto prevError {error};
+		error = _weights[_topology.size() - i].transpose() * error;
+
+		_biases[_topology.size() - i] += error * eta;
+		_weights[_topology.size() - i] += activations[_topology.size() - i].transpose() * prevError * eta;
+	}
 }
 
 
@@ -48,15 +69,27 @@ void NeuralNetwork::train(const std::vector<std::vector<float>>& inputs, const s
 }
 
 
-float NeuralNetwork::error(const std::vector<float>& output, const std::vector<float>& expected) {
-	if (output.size() != expected.size()) {
+Matrix NeuralNetwork::errorVector(const Matrix& actual, const Matrix& expected) {
+	if (actual.getHeight() != expected.getHeight()) {
+		throw std::length_error("Vector length mismatch");
+	}
+
+	Matrix result {actual.getHeight(), 1};
+	for (size_t i {0}; i < actual.getHeight(); ++i) {
+		result[i][0] = actual[i][0] - expected[i][0];
+	}
+	return result;
+}
+
+
+float NeuralNetwork::error(const Matrix& actual, const Matrix& expected) {
+	if (actual.getHeight() != expected.getHeight()) {
 		throw std::length_error("Vector length mismatch");
 	}
 
 	float err {0};
-
-	for (size_t i {0}; i < output.size(); ++i) {
-		err += static_cast<float>(std::pow(output[i] - expected[i], 2));
+	for (size_t i {0}; i < actual.getHeight(); ++i) {
+		err += static_cast<float>(std::pow(actual[i][0] - expected[i][0], 2));
 	}
 	return err;
 }

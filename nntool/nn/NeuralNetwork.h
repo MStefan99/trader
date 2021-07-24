@@ -18,18 +18,21 @@ public:
 	std::vector<float> feedforward(const std::vector<float>& input) const;
 
 	void propagateBackwards(const std::vector<float>& input,
-			const std::vector<float>& target, float eta = 0.005);
+			const std::vector<float>& target, float eta = 0.0005);
 
 	void train(const std::vector<std::vector<float>>& inputs,
 			const std::vector<std::vector<float>>& outputs,
-			size_t epochs = 1, float eta = 0.005);
+			size_t epochs = 1, float eta = 0.0005);
 
-	static float error(const std::vector<float>& output,
-			const std::vector<float>& expected);
+	static Matrix errorVector(const Matrix& actual,
+			const Matrix& expected);
+
+	static float error(const Matrix& actual,
+			const Matrix& expected);
 
 protected:
 	std::vector<Matrix> _weights;
-	std::vector<std::vector<float>> _biases;
+	std::vector<Matrix> _biases;
 	std::vector<size_t> _topology;
 };
 
