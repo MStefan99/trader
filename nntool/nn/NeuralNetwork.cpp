@@ -2,7 +2,19 @@
 // Created by MStefan99 on 23.7.21.
 //
 
+#include <list>
 #include "NeuralNetwork.h"
+
+
+template <class T>
+static T avg(std::list<T> values) {
+	T sum {values.front().getWidth(), values.front().getHeight()};
+
+	for (const auto& v: values) {
+		sum += v;
+	}
+	return sum / values.size();
+}
 
 
 NeuralNetwork::NeuralNetwork(std::vector<size_t> topology):
@@ -58,14 +70,61 @@ void NeuralNetwork::propagateBackwards(const std::vector<float>& input,
 }
 
 
-void NeuralNetwork::train(const std::vector<std::vector<float>>& inputs, const std::vector<std::vector<float>>& outputs,
-		size_t epochs, float eta) {
+void NeuralNetwork::train(const std::vector<std::vector<float>>& inputs,
+		const std::vector<std::vector<float>>& outputs,
+		float eta, size_t epochs) {
 	if (inputs.size() != outputs.size()) {
 		throw std::length_error("Input size does not equal output size");
 	}
 
-	for (size_t i {0}; i < epochs; ++i) {
-		propagateBackwards(inputs[i], outputs[i], eta);
+	for (size_t e {0}; e < epochs; ++e) {
+		for (size_t i {0}; i < inputs.size(); ++i) {
+			propagateBackwards(inputs[i], outputs[i], eta);
+		}
+	}
+}
+
+
+void NeuralNetwork::fastTrain(const std::vector<std::vector<float>>& inputs,
+		const std::vector<std::vector<float>>& outputs,
+		float eta, size_t epochs, size_t thread_num) {
+	std::list<NeuralNetwork> networks {};
+	std::list<std::thread> threads {};
+	std::list<Matrix> weights {};
+	std::list<Matrix> biases {};
+	size_t batchSize {inputs.size() / thread_num};
+
+	for (size_t i {0}; i < thread_num; ++i) {
+		networks.emplace_back(_topology);
+
+		std::vector<std::vector<float>> input_batch {inputs.begin() + i * batchSize,
+				inputs.begin() + (i + 1) * batchSize - 1};
+		std::vector<std::vector<float>> output_batch {outputs.begin() + i * batchSize,
+				outputs.begin() + (i + 1) * batchSize - 1};
+
+		threads.emplace_back(&NeuralNetwork::train, &networks.back(), input_batch, output_batch, eta, epochs);
+	}
+
+	for (auto& t : threads) {
+		t.join();
+	}
+
+	for (size_t i {0}; i < _topology.size() - 1; ++i) {
+		weights.clear();
+
+		for (const auto& n: networks) {
+			weights.push_back(n._weights[i]);
+		}
+		_weights[i] = avg(weights);
+	}
+
+	for (size_t i {0}; i < _topology.size(); ++i) {
+		biases.clear();
+
+		for (const auto& n: networks) {
+			biases.push_back(n._biases[i]);
+		}
+		_biases[i] = avg(biases);
 	}
 }
 

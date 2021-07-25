@@ -14,7 +14,7 @@ Matrix::Matrix(size_t w, size_t h):
 	for (size_t j {0}; j < h; ++j) {
 		std::vector<float> v {};
 		for (size_t i {0}; i < w; ++i) {
-			v.push_back(distribution(generator));
+			v.push_back(0);
 		}
 		_values.push_back(v);
 	}

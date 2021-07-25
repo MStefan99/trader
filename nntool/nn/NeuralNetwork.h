@@ -6,7 +6,9 @@
 #define TRADER_NEURALNETWORK_H
 
 #include <vector>
+#include <list>
 #include <cmath>
+#include <thread>
 
 #include "Matrix.h"
 
@@ -15,6 +17,9 @@ class NeuralNetwork {
 public:
 	explicit NeuralNetwork(std::vector<size_t> topology);
 
+	NeuralNetwork(const NeuralNetwork& network) = default;
+	NeuralNetwork& operator=(const NeuralNetwork& network) = default;
+
 	std::vector<float> feedforward(const std::vector<float>& input) const;
 
 	void propagateBackwards(const std::vector<float>& input,
@@ -22,7 +27,11 @@ public:
 
 	void train(const std::vector<std::vector<float>>& inputs,
 			const std::vector<std::vector<float>>& outputs,
-			size_t epochs = 1, float eta = 0.0005);
+			float eta = 0.0005, size_t epochs = 1);
+
+	void fastTrain(const std::vector<std::vector<float>>& inputs,
+			const std::vector<std::vector<float>>& outputs,
+			float eta = 0.0005, size_t epochs = 1, size_t thread_num = std::thread::hardware_concurrency());
 
 	static Matrix errorVector(const Matrix& actual,
 			const Matrix& expected);

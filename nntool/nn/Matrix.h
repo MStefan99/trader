@@ -27,9 +27,9 @@ public:
 	Matrix operator*(const Matrix& matrix) const;
 	Matrix operator*(const std::vector<float>& vector) const;
 
-	Matrix& operator*=(float scalar) ;
-	Matrix& operator*=(const Matrix& matrix) ;
-	Matrix& operator*=(const std::vector<float>& vector) ;
+	Matrix& operator*=(float scalar);
+	Matrix& operator*=(const Matrix& matrix);
+	Matrix& operator*=(const std::vector<float>& vector);
 
 	Matrix operator+(const Matrix& matrix) const;
 	Matrix operator+(const std::vector<float>& vector) const;

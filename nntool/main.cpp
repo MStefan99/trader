@@ -16,27 +16,30 @@ int main() {
 	std::mt19937 generator(randomDevice());
 	std::uniform_real_distribution<float> distribution {-10, 10};
 
+	std::vector<std::vector<float>> inputs {};
+	std::vector<std::vector<float>> outputs {};
 	for (size_t i {0}; i < 100000; ++i) {
 		float a {distribution(generator)};
 		float b {distribution(generator)};
 
-		std::vector<float> input {a, b};
-		std::vector<float> output {getResult(a, b)};
-
-		nn.propagateBackwards(input, output, 0.01);
+		inputs.push_back({a, b});
+		outputs.push_back({getResult(a, b)});
 	}
 
-	for (size_t i {0}; i < 20; ++i) {
+	nn.fastTrain(inputs, outputs, 0.001);
+
+	size_t attempts {100};
+	float errorSum {};
+	for (size_t i {0}; i < attempts; ++i) {
 		float a {distribution(generator)};
 		float b {distribution(generator)};
 
 		std::vector<float> input {a, b};
 		std::vector<float> output {getResult(a, b)};
 
-		std::cout << "f(" << a << ", " << b << ") = " << getResult(a, b)
-		          << " (predicted: " << nn.feedforward(input)[0] << ", loss: "
-		          << NeuralNetwork::error(Matrix {nn.feedforward(input)}, Matrix {output}) << ")" << std::endl;
+		errorSum += NeuralNetwork::error(Matrix {nn.feedforward(input)}, Matrix {output});
 	}
 
+	std::cout << "Average error: " << errorSum / static_cast<float>(attempts) << std::endl;
 	return 0;
 }
