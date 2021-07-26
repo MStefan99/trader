@@ -54,9 +54,9 @@ public:
 	friend std::istream& operator>>(std::istream& in, Matrix& matrix);
 
 protected:
-	std::vector<std::vector<float>> _values;
-	size_t _w;
-	size_t _h;
+	std::vector<std::vector<float>> _values {};
+	size_t _w {};
+	size_t _h {};
 };
 
 #endif //TRADER_MATRIX_H

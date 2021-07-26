@@ -171,3 +171,51 @@ float NeuralNetwork::error(const Matrix& actual, const Matrix& expected) {
 	}
 	return err;
 }
+
+
+std::ostream& operator<<(std::ostream& out, const NeuralNetwork& network) {
+	out << network._topology.size() << std::endl;
+	for (size_t i {0}; i < network._topology.size(); ++i) {
+		if (i) {
+			out << ',';
+		}
+		out << network._topology[i];
+	}
+	out << std::endl;
+
+	for (const auto& weightLayer: network._weights) {
+		out << weightLayer;
+	}
+	for (const auto& biasLayer: network._biases) {
+		out << biasLayer;
+	}
+
+	return out;
+}
+
+
+std::istream& operator>>(std::istream& in, NeuralNetwork& network) {
+	size_t topologySize {};
+
+	in >> topologySize;
+	network._topology.resize(topologySize);
+	network._weights.resize(topologySize - 1);
+	network._biases.resize(topologySize);
+
+	for (size_t i {}; i < topologySize; ++i) {
+		if (i) {
+			in >> ',';
+		}
+		in >> network._topology[i];
+	}
+
+	for (size_t i {}; i < topologySize - 1; ++i) {
+		in >> network._weights[i];
+	}
+
+	for (size_t i {}; i < topologySize; ++i) {
+		in >> network._biases[i];
+	}
+
+	return in;
+}

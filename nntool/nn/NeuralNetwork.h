@@ -9,12 +9,15 @@
 #include <list>
 #include <cmath>
 #include <thread>
+#include <iostream>
 
+#include "input_validation.h"
 #include "Matrix.h"
 
 
 class NeuralNetwork {
 public:
+	NeuralNetwork() = default;
 	explicit NeuralNetwork(std::vector<size_t> topology);
 
 	NeuralNetwork(const NeuralNetwork& network) = default;
@@ -44,10 +47,13 @@ public:
 	static float error(const Matrix& actual,
 			const Matrix& expected);
 
+	friend std::ostream& operator<<(std::ostream& out, const NeuralNetwork& network);
+	friend std::istream& operator>>(std::istream& in, NeuralNetwork& network);
+
 protected:
-	std::vector<Matrix> _weights;
-	std::vector<Matrix> _biases;
-	std::vector<size_t> _topology;
+	std::vector<Matrix> _weights {};
+	std::vector<Matrix> _biases {};
+	std::vector<size_t> _topology {};
 };
 
 #endif //TRADER_NEURALNETWORK_H

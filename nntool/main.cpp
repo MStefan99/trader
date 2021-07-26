@@ -3,7 +3,6 @@
 #include <random>
 #include <sstream>
 
-#include "input_validation.h"
 #include "NeuralNetwork.h"
 
 
@@ -13,19 +12,13 @@ float getResult(float a, float b) {
 
 
 int main() {
-	Matrix m {{1, 2, 3}, {4, 5, 6}};
-	Matrix m1;
 	std::stringstream stream;
 
-	stream << m << std::endl;
-	stream >> m1;
-	std::cout << m1;
-
-	#if 0
 	NeuralNetwork nn {{2, 1}};
+	NeuralNetwork nn1;
 	std::random_device randomDevice;
 	std::mt19937 generator(randomDevice());
-	std::uniform_real_distribution<float> distribution {-100, 100};
+	std::uniform_real_distribution<float> distribution {-10, 10};
 
 	std::vector<std::vector<float>> inputs {};
 	std::vector<std::vector<float>> outputs {};
@@ -39,8 +32,12 @@ int main() {
 	}
 
 	std::cout << "Data ready!" << std::endl;
-	nn.train(inputs, outputs, 0.0001);
+	nn.fastTrain(inputs, outputs, 0.01);
 	// The larger the input values, the lower eta should be to avoid overshooting during training
+
+	std::cout << nn;
+	stream << nn;
+	stream >> nn1;
 
 	size_t attempts {100};
 	float errorSum {};
@@ -51,10 +48,9 @@ int main() {
 		std::vector<float> input {a, b};
 		std::vector<float> output {getResult(a, b)};
 
-		errorSum += NeuralNetwork::error(nn.feedforward(input), output);
+		errorSum += NeuralNetwork::error(nn1.feedforward(input), output);
 	}
 
 	std::cout << "Average error: " << errorSum / static_cast<float>(attempts) << std::endl;
-		#endif
 	return 0;
 }

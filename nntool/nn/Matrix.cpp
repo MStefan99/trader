@@ -291,10 +291,11 @@ std::ostream& operator<<(std::ostream& out, const Matrix& matrix) {
 	out << matrix._w << ':' << matrix._h << std::endl;
 
 	for (size_t j {0}; j < matrix._h; ++j) {
-		out << matrix[j][0];
-
-		for (size_t i {1}; i < matrix._w; ++i) {
-			out << ',' << matrix[j][i];
+		for (size_t i {0}; i < matrix._w; ++i) {
+			if (i) {
+				out << ',';
+			}
+			out << matrix[j][i];
 		}
 		out << std::endl;
 	}
@@ -309,10 +310,12 @@ std::istream& operator>>(std::istream& in, Matrix& matrix) {
 
 	for (size_t j {0}; j < matrix._h; ++j) {
 		matrix._values[j].resize(matrix._w);
-		in >> matrix[j][0];
 
-		for (size_t i {1}; i < matrix._w; ++i) {
-			in >> ',' >> matrix[j][i];
+		for (size_t i {0}; i < matrix._w; ++i) {
+			if (i) {
+				in >> ',';
+			}
+			in >> matrix[j][i];
 		}
 	}
 
