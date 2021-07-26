@@ -167,7 +167,7 @@ float NeuralNetwork::error(const Matrix& actual, const Matrix& expected) {
 
 	float err {0};
 	for (size_t i {0}; i < actual.getHeight(); ++i) {
-		err += static_cast<float>(std::pow(actual[i][0] - expected[i][0], 2));
+		err += static_cast<float>(std::abs(actual[i][0] - expected[i][0]));
 	}
 	return err;
 }

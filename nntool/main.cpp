@@ -6,7 +6,7 @@
 
 
 float getResult(float a, float b) {
-	return (a - 7) / 2 + 3 * (b + 11) - 13;
+	return (a - 2) / 3 + 7 * (b + 5) - 11;
 }
 
 
@@ -18,16 +18,19 @@ int main() {
 
 	std::vector<std::vector<float>> inputs {};
 	std::vector<std::vector<float>> outputs {};
-	for (size_t i {0}; i < 10000000; ++i) {
+	for (size_t i {0}; i < 12; ++i) {
 		float a {distribution(generator)};
 		float b {distribution(generator)};
+		float res {getResult(a, b)};
 
 		inputs.push_back({a, b});
-		outputs.push_back({getResult(a, b)});
+		outputs.push_back({res});
+
+		std::cout << "f(" << a << ", " << b << ") = " << res << std::endl;
 	}
 
 	std::cout << "Data ready!" << std::endl;
-	nn.fastTrain(inputs, outputs, 0.01);
+	nn.fastTrain(inputs, outputs, 0.01, 100000);
 
 	size_t attempts {100};
 	float errorSum {};
@@ -38,7 +41,7 @@ int main() {
 		std::vector<float> input {a, b};
 		std::vector<float> output {getResult(a, b)};
 
-		errorSum += NeuralNetwork::error(Matrix {nn.feedforward(input)}, Matrix {output});
+		errorSum += NeuralNetwork::error(nn.feedforward(input), output);
 	}
 
 	std::cout << "Average error: " << errorSum / static_cast<float>(attempts) << std::endl;

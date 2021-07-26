@@ -13,7 +13,7 @@
 class Matrix {
 public:
 	explicit Matrix(size_t w = 1, size_t h = 1);
-	explicit Matrix(const std::vector<float>& vector);
+	Matrix(const std::vector<float>& vector);  // implicitly creating matrix from vector is fine
 	Matrix(const std::initializer_list<std::initializer_list<float>>& list);
 
 	void randomize();
