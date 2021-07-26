@@ -29,6 +29,11 @@ public:
 			const std::vector<std::vector<float>>& outputs,
 			float eta = 0.0005, size_t epochs = 1);
 
+	void batchTrain(const std::vector<std::vector<float>>& inputs,
+			const std::vector<std::vector<float>>& outputs,
+			size_t start, size_t end,
+			float eta = 0.0005, size_t epochs = 1);
+
 	void fastTrain(const std::vector<std::vector<float>>& inputs,
 			const std::vector<std::vector<float>>& outputs,
 			float eta = 0.0005, size_t epochs = 1, size_t thread_num = std::thread::hardware_concurrency());

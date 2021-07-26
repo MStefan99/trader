@@ -85,6 +85,24 @@ void NeuralNetwork::train(const std::vector<std::vector<float>>& inputs,
 }
 
 
+void NeuralNetwork::batchTrain(const std::vector<std::vector<float>>& inputs,
+		const std::vector<std::vector<float>>& outputs,
+		size_t start, size_t end,
+		float eta, size_t epochs) {
+	if (inputs.size() != outputs.size()) {
+		throw std::length_error("Input size does not equal output size");
+	}
+	if (inputs.size() < end) {
+		end = inputs.size();
+	}
+
+	for (size_t e {0}; e < epochs; ++e) {
+		for (size_t i {start}; i < end; ++i) {
+			propagateBackwards(inputs[i], outputs[i], eta);
+		}
+	}
+}
+
 void NeuralNetwork::fastTrain(const std::vector<std::vector<float>>& inputs,
 		const std::vector<std::vector<float>>& outputs,
 		float eta, size_t epochs, size_t thread_num) {
@@ -97,12 +115,10 @@ void NeuralNetwork::fastTrain(const std::vector<std::vector<float>>& inputs,
 	for (size_t i {0}; i < thread_num; ++i) {
 		networks.emplace_back(_topology);
 
-		std::vector<std::vector<float>> input_batch {inputs.begin() + i * batchSize,
-				inputs.begin() + (i + 1) * batchSize - 1};
-		std::vector<std::vector<float>> output_batch {outputs.begin() + i * batchSize,
-				outputs.begin() + (i + 1) * batchSize - 1};
-
-		threads.emplace_back(&NeuralNetwork::train, &networks.back(), input_batch, output_batch, eta, epochs);
+		threads.emplace_back(&NeuralNetwork::batchTrain, &networks.back(),
+				std::ref(inputs), std::ref(outputs),
+				i * batchSize, (i + 1) * batchSize,
+				eta, epochs);
 	}
 
 	for (auto& t : threads) {

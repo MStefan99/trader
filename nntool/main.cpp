@@ -18,7 +18,7 @@ int main() {
 
 	std::vector<std::vector<float>> inputs {};
 	std::vector<std::vector<float>> outputs {};
-	for (size_t i {0}; i < 100000; ++i) {
+	for (size_t i {0}; i < 10000000; ++i) {
 		float a {distribution(generator)};
 		float b {distribution(generator)};
 
@@ -26,7 +26,8 @@ int main() {
 		outputs.push_back({getResult(a, b)});
 	}
 
-	nn.fastTrain(inputs, outputs, 0.001);
+	std::cout << "Data ready!" << std::endl;
+	nn.fastTrain(inputs, outputs, 0.001, 5);
 
 	size_t attempts {100};
 	float errorSum {};
