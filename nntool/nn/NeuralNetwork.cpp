@@ -27,6 +27,7 @@ NeuralNetwork::NeuralNetwork(std::vector<size_t> topology):
 
 	for (auto it {++topology.begin()}; it != topology.end(); ++it) {
 		_weights.emplace_back(*(it - 1), *it);
+		_weights.back().randomize();
 	}
 }
 
@@ -103,6 +104,7 @@ void NeuralNetwork::batchTrain(const std::vector<std::vector<float>>& inputs,
 	}
 }
 
+
 void NeuralNetwork::fastTrain(const std::vector<std::vector<float>>& inputs,
 		const std::vector<std::vector<float>>& outputs,
 		float eta, size_t epochs, size_t thread_num) {
@@ -115,7 +117,7 @@ void NeuralNetwork::fastTrain(const std::vector<std::vector<float>>& inputs,
 	for (size_t i {0}; i < thread_num; ++i) {
 		networks.emplace_back(_topology);
 
-		threads.emplace_back(&NeuralNetwork::batchTrain, &networks.back(),
+		threads.emplace_back(&NeuralNetwork::batchTrain, std::ref(networks.back()),
 				std::ref(inputs), std::ref(outputs),
 				i * batchSize, (i + 1) * batchSize,
 				eta, epochs);

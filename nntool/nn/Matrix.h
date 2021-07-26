@@ -16,6 +16,8 @@ public:
 	explicit Matrix(const std::vector<float>& vector);
 	Matrix(const std::initializer_list<std::initializer_list<float>>& list);
 
+	void randomize();
+
 	std::vector<float>& operator[](size_t i);
 	const std::vector<float>& operator[](size_t i) const;
 

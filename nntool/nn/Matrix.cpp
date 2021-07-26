@@ -7,16 +7,22 @@
 
 Matrix::Matrix(size_t w, size_t h):
 		_w {w}, _h {h} {
+	_values.resize(_h);
+	for (size_t j {0}; j < _h; ++j) {
+		_values[j].resize(_w);
+	}
+}
+
+
+void Matrix::randomize() {
 	std::random_device randomDevice;
 	std::mt19937 generator(randomDevice());
 	std::uniform_real_distribution<float> distribution {-.1, .1};
 
-	for (size_t j {0}; j < h; ++j) {
-		std::vector<float> v {};
-		for (size_t i {0}; i < w; ++i) {
-			v.push_back(0);
+	for (size_t j {0}; j < _h; ++j) {
+		for (size_t i {0}; i < _w; ++i) {
+			_values[j][i] = distribution(generator);
 		}
-		_values.push_back(v);
 	}
 }
 

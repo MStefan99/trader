@@ -1,6 +1,6 @@
 #include <iostream>
 #include <vector>
-#include <cstdlib>
+#include <random>
 
 #include "NeuralNetwork.h"
 
@@ -27,7 +27,7 @@ int main() {
 	}
 
 	std::cout << "Data ready!" << std::endl;
-	nn.fastTrain(inputs, outputs, 0.001, 5);
+	nn.fastTrain(inputs, outputs, 0.01);
 
 	size_t attempts {100};
 	float errorSum {};
