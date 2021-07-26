@@ -11,7 +11,8 @@
 
 
 template <class Traits>
-std::basic_istream<char, Traits>& operator>>(std::basic_istream<char, Traits>& in, const char& c) {
+std::basic_istream<char, Traits>& operator>>(std::basic_istream<char, Traits>& in,
+		const char& c) {
 	char buffer;
 
 	in.read(&buffer, 1);
@@ -24,7 +25,8 @@ std::basic_istream<char, Traits>& operator>>(std::basic_istream<char, Traits>& i
 
 
 template <class Traits, std::size_t N>
-std::basic_istream<char, Traits>& operator>>(std::basic_istream<char, Traits>& in, const char (& s)[N]) {
+std::basic_istream<char, Traits>& operator>>(std::basic_istream<char, Traits>& in,
+		const char (& s)[N]) {
 	char buffer[N] {};
 
 	in.read(buffer, N - 1);

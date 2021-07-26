@@ -47,6 +47,14 @@ Matrix::Matrix(const std::vector<float>& vector):
 }
 
 
+Matrix::Matrix(const std::vector<std::vector<float>>& vector):
+		_w {vector.front().size()}, _h {vector.size()} {
+	for (size_t i {0}; i < vector.size(); ++i) {
+		_values.emplace_back(vector[i]);
+	}
+}
+
+
 std::vector<float>& Matrix::operator[](size_t i) {
 	return _values[i];
 }

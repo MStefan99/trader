@@ -19,9 +19,13 @@ static T avg(std::list<T> values) {
 
 NeuralNetwork::NeuralNetwork(std::vector<size_t> topology):
 		_topology {topology} {
-	for (auto it {topology.begin()}; it != topology.end(); ++it) {
+	if (_topology.empty()) {
+		throw std::runtime_error("Empty topology");
+	}
+
+	for (const auto& layer: _topology) {
 		std::vector<float> biases {};
-		biases.resize(*it);
+		biases.resize(layer);
 		_biases.emplace_back(biases);
 	}
 
@@ -32,7 +36,15 @@ NeuralNetwork::NeuralNetwork(std::vector<size_t> topology):
 }
 
 
+std::vector<size_t> NeuralNetwork::getTopology() const {
+	return _topology;
+}
+
+
 std::vector<float> NeuralNetwork::feedforward(const std::vector<float>& input) const {
+	if (_topology.empty()) {
+		throw std::runtime_error("Empty topology");
+	}
 	Matrix activation {input};
 
 	activation = activation + _biases[0];
@@ -46,6 +58,9 @@ std::vector<float> NeuralNetwork::feedforward(const std::vector<float>& input) c
 
 void NeuralNetwork::propagateBackwards(const std::vector<float>& input,
 		const std::vector<float>& expected, float eta) {
+	if (_topology.empty()) {
+		throw std::runtime_error("Empty topology");
+	}
 	std::vector<Matrix> activations {};
 	Matrix activation {input};
 
@@ -71,30 +86,28 @@ void NeuralNetwork::propagateBackwards(const std::vector<float>& input,
 }
 
 
-void NeuralNetwork::train(const std::vector<std::vector<float>>& inputs,
-		const std::vector<std::vector<float>>& outputs,
+void NeuralNetwork::train(const Matrix& inputs, const Matrix& outputs,
 		float eta, size_t epochs) {
-	if (inputs.size() != outputs.size()) {
+	if (inputs.getHeight() != outputs.getHeight()) {
 		throw std::length_error("Input size does not equal output size");
 	}
 
 	for (size_t e {0}; e < epochs; ++e) {
-		for (size_t i {0}; i < inputs.size(); ++i) {
+		for (size_t i {0}; i < inputs.getHeight(); ++i) {
 			propagateBackwards(inputs[i], outputs[i], eta);
 		}
 	}
 }
 
 
-void NeuralNetwork::batchTrain(const std::vector<std::vector<float>>& inputs,
-		const std::vector<std::vector<float>>& outputs,
+void NeuralNetwork::batchTrain(const Matrix& inputs, const Matrix& outputs,
 		size_t start, size_t end,
 		float eta, size_t epochs) {
-	if (inputs.size() != outputs.size()) {
+	if (inputs.getHeight() != outputs.getHeight()) {
 		throw std::length_error("Input size does not equal output size");
 	}
-	if (inputs.size() < end) {
-		end = inputs.size();
+	if (inputs.getHeight() < end) {
+		end = inputs.getHeight();
 	}
 
 	for (size_t e {0}; e < epochs; ++e) {
@@ -105,14 +118,13 @@ void NeuralNetwork::batchTrain(const std::vector<std::vector<float>>& inputs,
 }
 
 
-void NeuralNetwork::fastTrain(const std::vector<std::vector<float>>& inputs,
-		const std::vector<std::vector<float>>& outputs,
+void NeuralNetwork::fastTrain(const Matrix& inputs, const Matrix& outputs,
 		float eta, size_t epochs, size_t thread_num) {
 	std::list<NeuralNetwork> networks {};
 	std::list<std::thread> threads {};
 	std::list<Matrix> weights {};
 	std::list<Matrix> biases {};
-	size_t batchSize {inputs.size() / thread_num};
+	size_t batchSize {inputs.getHeight() / thread_num};
 
 	for (size_t i {0}; i < thread_num; ++i) {
 		networks.emplace_back(_topology);
