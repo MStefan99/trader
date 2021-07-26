@@ -1,7 +1,9 @@
 #include <iostream>
 #include <vector>
 #include <random>
+#include <sstream>
 
+#include "input_validation.h"
 #include "NeuralNetwork.h"
 
 
@@ -11,6 +13,15 @@ float getResult(float a, float b) {
 
 
 int main() {
+	Matrix m {{1, 2, 3}, {4, 5, 6}};
+	Matrix m1;
+	std::stringstream stream;
+
+	stream << m << std::endl;
+	stream >> m1;
+	std::cout << m1;
+
+	#if 0
 	NeuralNetwork nn {{2, 1}};
 	std::random_device randomDevice;
 	std::mt19937 generator(randomDevice());
@@ -44,5 +55,6 @@ int main() {
 	}
 
 	std::cout << "Average error: " << errorSum / static_cast<float>(attempts) << std::endl;
+		#endif
 	return 0;
 }

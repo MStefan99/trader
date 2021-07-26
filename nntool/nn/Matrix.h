@@ -8,6 +8,9 @@
 #include <vector>
 #include <stdexcept>
 #include <random>
+#include <iostream>
+
+#include "input_validation.h"
 
 
 class Matrix {
@@ -46,6 +49,9 @@ public:
 
 	size_t getWidth() const;
 	size_t getHeight() const;
+
+	friend std::ostream& operator<<(std::ostream& out, const Matrix& matrix);
+	friend std::istream& operator>>(std::istream& in, Matrix& matrix);
 
 protected:
 	std::vector<std::vector<float>> _values;
