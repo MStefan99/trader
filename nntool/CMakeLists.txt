@@ -9,7 +9,7 @@ else ()
 	add_link_options(-pthread)
 endif ()
 
-add_subdirectory(nn)
+add_subdirectory(NeuralNetwork)
 
 add_executable(trader main.cpp)
 target_link_libraries(trader NeuralNetwork)
