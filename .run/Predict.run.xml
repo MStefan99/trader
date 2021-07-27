@@ -1,0 +1,7 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Predict" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="-i data.txt -n nn.txt" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="trader" TARGET_NAME="trader" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="trader" RUN_TARGET_NAME="trader">
+    <method v="2">
+      <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+    </method>
+  </configuration>
+</component>

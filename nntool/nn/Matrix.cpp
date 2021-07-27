@@ -285,6 +285,11 @@ Matrix::operator std::vector<float>() const {
 }
 
 
+Matrix::operator std::vector<std::vector<float>>() const {
+	return _values;
+}
+
+
 size_t Matrix::getWidth() const {
 	return _w;
 }

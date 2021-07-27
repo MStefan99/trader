@@ -86,28 +86,28 @@ void NeuralNetwork::propagateBackwards(const std::vector<float>& input,
 }
 
 
-void NeuralNetwork::train(const Matrix& inputs, const Matrix& outputs,
+void NeuralNetwork::train(const Rows& inputs, const Rows& outputs,
 		float eta, size_t epochs) {
-	if (inputs.getHeight() != outputs.getHeight()) {
+	if (inputs.size() != outputs.size()) {
 		throw std::length_error("Input size does not equal output size");
 	}
 
 	for (size_t e {0}; e < epochs; ++e) {
-		for (size_t i {0}; i < inputs.getHeight(); ++i) {
+		for (size_t i {0}; i < inputs.size(); ++i) {
 			propagateBackwards(inputs[i], outputs[i], eta);
 		}
 	}
 }
 
 
-void NeuralNetwork::batchTrain(const Matrix& inputs, const Matrix& outputs,
+void NeuralNetwork::batchTrain(const Rows& inputs, const Rows& outputs,
 		size_t start, size_t end,
 		float eta, size_t epochs) {
-	if (inputs.getHeight() != outputs.getHeight()) {
+	if (inputs.size() != outputs.size()) {
 		throw std::length_error("Input size does not equal output size");
 	}
-	if (inputs.getHeight() < end) {
-		end = inputs.getHeight();
+	if (inputs.size() < end) {
+		end = inputs.size();
 	}
 
 	for (size_t e {0}; e < epochs; ++e) {
@@ -118,13 +118,13 @@ void NeuralNetwork::batchTrain(const Matrix& inputs, const Matrix& outputs,
 }
 
 
-void NeuralNetwork::fastTrain(const Matrix& inputs, const Matrix& outputs,
+void NeuralNetwork::fastTrain(const Rows& inputs, const Rows& outputs,
 		float eta, size_t epochs, size_t thread_num) {
 	std::list<NeuralNetwork> networks {};
 	std::list<std::thread> threads {};
 	std::list<Matrix> weights {};
 	std::list<Matrix> biases {};
-	size_t batchSize {inputs.getHeight() / thread_num};
+	size_t batchSize {inputs.size() / thread_num};
 
 	for (size_t i {0}; i < thread_num; ++i) {
 		networks.emplace_back(_topology);
@@ -156,6 +156,32 @@ void NeuralNetwork::fastTrain(const Matrix& inputs, const Matrix& outputs,
 		}
 		_biases[i] = avg(biases);
 	}
+}
+
+
+Column NeuralNetwork::errorVector(const Column& actual, const Column& expected) {
+	if (actual.size() != expected.size()) {
+		throw std::length_error("Vector length mismatch");
+	}
+
+	Column result {};
+	for (size_t i {0}; i < actual.size(); ++i) {
+		result.push_back({actual[i] - expected[i]});
+	}
+	return result;
+}
+
+
+float NeuralNetwork::error(const Column& actual, const Column& expected) {
+	if (actual.size() != expected.size()) {
+		throw std::length_error("Vector length mismatch");
+	}
+
+	float err {0};
+	for (size_t i {0}; i < actual.size(); ++i) {
+		err += static_cast<float>(std::abs(actual[i] - expected[i]));
+	}
+	return err;
 }
 
 

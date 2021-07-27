@@ -9,35 +9,23 @@
 #include <vector>
 
 #include "input_validation.h"
+#include "Matrix.h"
 
 
 template <class T>
 std::ostream& operator<<(std::ostream& out, const std::vector<T>& vector) {
-	out << vector.size() << std::endl;
-
-	for (size_t i {0}; i < vector.size(); ++i) {
-		if (i) {
-			out << ',';
-		}
-		out << vector[i];
-	}
+	Matrix m {vector};
+	out << m;
 	return out;
 }
 
 
 template <class T>
 std::istream& operator>>(std::istream& in, std::vector<T>& vector) {
-	size_t vectorSize {};
+	Matrix m {};
+	in >> m;
 
-	in >> vectorSize;
-	vector.resize(vectorSize);
-
-	for (size_t i {}; i < vectorSize; ++i) {
-		if (i) {
-			in >> ',';
-		}
-		in >> vector[i];
-	}
+	vector = static_cast<std::vector<T>>(m);
 	return in;
 }
 

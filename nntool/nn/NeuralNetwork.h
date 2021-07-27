@@ -14,6 +14,9 @@
 #include "input_validation.h"
 #include "Matrix.h"
 
+typedef std::vector<float> Column;
+typedef std::vector<std::vector<float>> Rows;
+
 
 class NeuralNetwork {
 public:
@@ -25,23 +28,22 @@ public:
 	NeuralNetwork(const NeuralNetwork& network) = default;
 	NeuralNetwork& operator=(const NeuralNetwork& network) = default;
 
-	std::vector<float> feedforward(const std::vector<float>& input) const;
+	Column feedforward(const Column& input) const;
 
-	void propagateBackwards(const std::vector<float>& input,
-			const std::vector<float>& target, float eta = 0.0005);
+	void propagateBackwards(const Column& input, const Column& target, float eta = 0.0005);
 
-	void train(const Matrix& inputs, const Matrix& outputs,
-			float eta = 0.0005, size_t epochs = 1);
+	void train(const Rows& inputs, const Rows& outputs, float eta = 0.0005, size_t epochs = 1);
 
-	void batchTrain(const Matrix& inputs, const Matrix& outputs,
-			size_t start, size_t end,
-			float eta = 0.0005, size_t epochs = 1);
+	void batchTrain(const Rows& inputs, const Rows& outputs,
+			size_t start, size_t end, float eta = 0.0005, size_t epochs = 1);
 
-	void fastTrain(const Matrix& inputs, const Matrix& outputs,
+	void fastTrain(const Rows& inputs, const Rows& outputs,
 			float eta = 0.0005, size_t epochs = 1, size_t thread_num = std::thread::hardware_concurrency());
 
-	static Matrix errorVector(const Matrix& actual, const Matrix& expected);
+	static Column errorVector(const Column& actual, const Column& expected);
+	static float error(const Column& actual, const Column& expected);
 
+	static Matrix errorVector(const Matrix& actual, const Matrix& expected);
 	static float error(const Matrix& actual, const Matrix& expected);
 
 	friend std::ostream& operator<<(std::ostream& out, const NeuralNetwork& network);
