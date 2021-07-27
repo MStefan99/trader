@@ -67,6 +67,20 @@ static void writeFile(const std::string& filename, T& data) {
 }
 
 
+static std::vector<size_t> readTopology(const std::string& str) {
+	std::vector<size_t> topology {};
+	std::string tmp {str};
+
+	while (tmp.find(',') != std::string::npos) {
+		topology.push_back(std::stoul(tmp.substr(0, tmp.find(','))));
+		tmp.erase(0, tmp.find(',') + 1);
+	}
+	topology.push_back(std::stoul(tmp));
+
+	return topology;
+}
+
+
 int main(int argc, char* argv[]) {
 	auto help {getParameter(argc, argv, helpOptions, 0)};
 
@@ -155,8 +169,8 @@ int main(int argc, char* argv[]) {
 		auto epochInput {getParameter(argc, argv, epochOptions)};
 		auto etaInput {getParameter(argc, argv, etaOptions)};
 
-		if (topologyInput.first) {
-//			std::cin >> topology;
+		if (topologyInput.first) {  // Reading topology
+			topology = readTopology(topologyInput.second.front());
 		} else {  // Using default topology if not specified
 			if (!quiet.first) {
 				std::cout << "No topology specified. Using default: "
