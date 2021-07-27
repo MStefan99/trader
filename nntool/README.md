@@ -21,7 +21,7 @@ If you want to disable any output on stdout, you can use the quiet mode.
 
 ### Training mode
 
-./tool [-h/--help] -n/--nn nnFile [-i/--in inFile] [-o/--out outFile] -t/--train
+./tool [-h/--help] -n/--nn nnFile [-i/--in inFile] [-o/--out outFile] [-t/--train] [-v/--verify]
 [-p/--topology topology] [-e/--epochs epochs] [-a/--eta eta] [-f/--fast] [-q/--quiet]
 
 Training mode is used to create neural networks for a specific task. In this mode, a neural network is first created,
@@ -33,12 +33,15 @@ topology represents the amount of neurons in each layer. The size of the first l
 example, and the size of the last one must match the length of each output. Learning rate is used to set how fast the
 network will change its values. Higher values result in faster training but can result in a network overshooting the
 desired result. Fast mode uses multithreading to speed up the training process significantly, however at times the
-network may not converge properly, producing bad results. Quiet mode can be used to disable any output on stdout.
+network may not converge properly, producing bad results. Quiet mode can be used to disable any output on stdout. The
+network can be optionally verified on up to 100 examples. If verification is requested without training, the neural
+network will be loaded from the file.
 
 ### Data representation
-All data is represented in CSV format with commas as separators and line breaks as line separators.
-The only notable feature is that the first column of the first row should contain the dimensions of the data in the 
-format W:H, where W is width and H is height represented as integer numbers.  
+
+All data is represented in CSV format with commas as separators and line breaks as line separators. The only notable
+feature is that the first column of the first row should contain the dimensions of the data in the format W:H, where W
+is width and H is height represented as integer numbers.  
 An example of the format can look like this:
 
 ```

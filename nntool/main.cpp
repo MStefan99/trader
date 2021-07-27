@@ -6,12 +6,15 @@
 #include "NeuralNetwork.h"
 
 
+#define MAX_VERIFY_SIZE 100
+
 typedef std::vector<std::string> strings;
 
 static const strings inOptions {"-i", "--input"};
 static const strings outOptions {"-o", "--output"};
 static const strings nnOptions {"-n", "--nn"};
 static const strings trainOptions {"-t", "--train"};
+static const strings verifyOptions {"-v", "--verify"};
 static const strings epochOptions {"-e", "--epochs"};
 static const strings etaOptions {"-a", "--eta"};
 static const strings helpOptions {"-h", "--help"};
@@ -91,7 +94,7 @@ int main(int argc, char* argv[]) {
 		          << std::endl << std::endl
 		          << "Usage:" << std::endl
 		          << "\t ./tool [-h/--help] -n/--nn nnFile [-i/--in inFile] [-o/--out outFile] "
-		          << "[-t/--train] [-p/--topology topology] [-e/--epochs epochs] "
+		          << "[-t/--train] [-v/--verify] [-p/--topology topology] [-e/--epochs epochs] "
 		          << "[-a/--eta eta] [-f/--fast] [-q/--quiet]" << std::endl
 		          << "Options:" << std::endl
 		          << "\t-h, --help    Displays this page" << std::endl
@@ -99,6 +102,7 @@ int main(int argc, char* argv[]) {
 		          << "\t-i, --inFile inFile    Path to the input file"
 		          << "\t-o, --outFile outFile    Path to the output file"
 		          << "\t-t, --train    Runs the tool in the training mode. Requires output file" << std::endl
+		          << "\t-v, --verify    Verifies the training results on up to 100 examples" << std::endl
 		          << "\t-p, --topology topology    Topology to use for the neural network" << std::endl
 		          << "\t-e, --epochs    Number of epochs to use during training" << std::endl
 		          << "\t-a, --eta    Eta (learning rate) of the network" << std::endl
@@ -108,40 +112,14 @@ int main(int argc, char* argv[]) {
 	}
 
 	auto train {getParameter(argc, argv, trainOptions, 0)};
+	auto verify {getParameter(argc, argv, verifyOptions, 0)};
 	auto inFilename {getParameter(argc, argv, inOptions)};
 	auto outFilename {getParameter(argc, argv, outOptions)};
 	auto nnFilename {getParameter(argc, argv, nnOptions)};
 	auto quiet {getParameter(argc, argv, quietOptions, 0)};
 	auto fast {getParameter(argc, argv, fastOptions, 0)};
 
-	if (!train.first) {  // Feedforward mode
-		Column in {};
-
-		if (!nnFilename.first) {  // Checking if NN file specified
-			std::cout << "No NN specified, please rerun with 'nn' option";
-			std::exit(5);
-		}
-
-		NeuralNetwork nn;
-		readFile(nnFilename.second.front(), nn);
-
-		if (!inFilename.first) {  // Reading inputs from stdin if not passed as an argument
-			if (!quiet.first) {
-				std::cout << "No input file specified. Rerun the tool with 'in' option or use stdin: " << std::endl;
-			}
-			std::cin >> in;
-		} else {
-			readFile(inFilename.second.front(), in);
-		}
-
-		Column out {nn.feedforward(in)};
-
-		if (!outFilename.first) {  // Printing result to stdout
-			std::cout << out;
-		} else {
-			writeFile(outFilename.second.front(), out);
-		}
-	} else {  // Training mode
+	if (train.first || verify.first) {  // Training mode
 		if (!nnFilename.first) {
 			std::cerr << "No neural network file specified, neural network won't be saved!" << std::endl;
 			std::exit(5);
@@ -169,31 +147,74 @@ int main(int argc, char* argv[]) {
 			std::cin >> out;
 		}
 
-		auto topologyInput {getParameter(argc, argv, topologyOptions)};
-		auto epochInput {getParameter(argc, argv, epochOptions)};
-		auto etaInput {getParameter(argc, argv, etaOptions)};
+		if (train.first) {
+			auto topologyInput {getParameter(argc, argv, topologyOptions)};
+			auto epochInput {getParameter(argc, argv, epochOptions)};
+			auto etaInput {getParameter(argc, argv, etaOptions)};
 
-		if (topologyInput.first) {  // Reading topology
-			topology = readTopology(topologyInput.second.front());
-		} else {  // Using default topology if not specified
-			if (!quiet.first) {
-				std::cout << "No topology specified. Using default: "
-				          << in.front().size() << ",10," << out.front().size() << std::endl;
+			if (topologyInput.first) {  // Reading topology
+				topology = readTopology(topologyInput.second.front());
+			} else {  // Using default topology if not specified
+				if (!quiet.first) {
+					std::cout << "No topology specified. Using default: "
+					          << in.front().size() << ",10," << out.front().size() << std::endl;
+				}
+				topology.push_back(in.front().size());
+				topology.push_back(10);
+				topology.push_back(out.front().size());
 			}
-			topology.push_back(in.front().size());
-			topology.push_back(10);
-			topology.push_back(out.front().size());
+
+			NeuralNetwork nn {topology};
+			if (fast.first) {
+				nn.fastTrain(in, out, etaInput.first? std::stof(etaInput.second.front()) : 0.001f,
+						epochInput.first? std::stoull(epochInput.second.front()) : 10);
+			} else {
+				nn.train(in, out, etaInput.first? std::stof(etaInput.second.front()) : 0.001f,
+						epochInput.first? std::stoull(epochInput.second.front()) : 10);
+			}
+			writeFile(nnFilename.second.front(), nn);
 		}
 
-		NeuralNetwork nn {topology};
-		if (fast.first) {
-			nn.fastTrain(in, out, etaInput.first? std::stof(etaInput.second.front()) : 0.001f,
-					epochInput.first? std::stoull(epochInput.second.front()) : 10);
-		} else {
-			nn.train(in, out, etaInput.first? std::stof(etaInput.second.front()) : 0.001f,
-					epochInput.first? std::stoull(epochInput.second.front()) : 10);
+		if (verify.first) {
+			NeuralNetwork nn {};
+			readFile(nnFilename.second.front(), nn);
+
+			float error {};
+			size_t verifySize {in.size() < MAX_VERIFY_SIZE? in.size() : MAX_VERIFY_SIZE};
+
+			for (size_t i {0}; i < verifySize; ++i) {
+				error += NeuralNetwork::error(nn.feedforward(in[i]), out[i]);
+			}
+
+			std::cout << "Average error: " << error / static_cast<float>(verifySize) << std::endl;
 		}
-		writeFile(nnFilename.second.front(), nn);
+	} else {  // Feedforward mode
+		Column in {};
+
+		if (!nnFilename.first) {  // Checking if NN file specified
+			std::cout << "No NN specified, please rerun with 'nn' option";
+			std::exit(5);
+		}
+
+		NeuralNetwork nn;
+		readFile(nnFilename.second.front(), nn);
+
+		if (!inFilename.first) {  // Reading inputs from stdin if not passed as an argument
+			if (!quiet.first) {
+				std::cout << "No input file specified. Rerun the tool with 'in' option or use stdin: " << std::endl;
+			}
+			std::cin >> in;
+		} else {
+			readFile(inFilename.second.front(), in);
+		}
+
+		Column out {nn.feedforward(in)};
+
+		if (!outFilename.first) {  // Printing result to stdout
+			std::cout << out;
+		} else {
+			writeFile(outFilename.second.front(), out);
+		}
 	}
 	return 0;
 }
