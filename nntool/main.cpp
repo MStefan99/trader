@@ -21,7 +21,6 @@ static const strings helpOptions {"-h", "--help"};
 static const strings topologyOptions {"-p", "--topology"};
 static const strings quietOptions {"-q", "--quiet"};
 static const strings fastOptions {"-f", "--fast"};
-// TODO: add verification mode
 
 
 static std::pair<bool, strings> getParameter(int argc, char* argv[],

@@ -316,6 +316,7 @@ std::ostream& operator<<(std::ostream& out, const Matrix& matrix) {
 	return out;
 }
 
+
 std::istream& operator>>(std::istream& in, Matrix& matrix) {
 	in >> matrix._w >> ':' >> matrix._h;
 

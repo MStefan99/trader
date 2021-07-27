@@ -14,6 +14,7 @@
 #include "input_validation.h"
 #include "Matrix.h"
 
+
 typedef std::vector<float> Column;
 typedef std::vector<std::vector<float>> Rows;
 
