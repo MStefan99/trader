@@ -8,26 +8,13 @@
 #include <iostream>
 #include <vector>
 
-#include "input_validation.h"
 #include "Matrix.h"
 
 
-template <class T>
-std::ostream& operator<<(std::ostream& out, const std::vector<T>& vector) {
-	Matrix m {vector};
-	out << m;
-	return out;
-}
+std::ostream& operator<<(std::ostream& out, const std::vector<float>& vector);
+std::istream& operator>>(std::istream& in, std::vector<float>& vector);
 
-
-template <class T>
-std::istream& operator>>(std::istream& in, std::vector<T>& vector) {
-	Matrix m {};
-	in >> m;
-
-	vector = static_cast<std::vector<T>>(m);
-	return in;
-}
-
+std::ostream& operator<<(std::ostream& out, const std::vector<std::vector<float>>& vector);
+std::istream& operator>>(std::istream& in, std::vector<std::vector<float>>& vector);
 
 #endif //TRADER_VECTOR_IO_H
