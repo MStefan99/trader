@@ -18,6 +18,7 @@ static const strings helpOptions {"-h", "--help"};
 static const strings topologyOptions {"-p", "--topology"};
 static const strings quietOptions {"-q", "--quiet"};
 static const strings fastOptions {"-f", "--fast"};
+// TODO: add verification mode
 
 
 static std::pair<bool, strings> getParameter(int argc, char* argv[],
@@ -89,15 +90,18 @@ int main(int argc, char* argv[]) {
 		          << "This tool is a core component of a trader application, making stock price predictions."
 		          << std::endl << std::endl
 		          << "Usage:" << std::endl
-		          << "\t ./tool [-h/--help] [-i/--in inFile] [-o/--out outFile] [-t/--train] "
-		          << "[-n/--nn nnFile] [-p/--topology topology] [-q/--quiet]" << std::endl
+		          << "\t ./tool [-h/--help] -n/--nn nnFile [-i/--in inFile] [-o/--out outFile] "
+		          << "[-t/--train] [-p/--topology topology] [-e/--epochs epochs] "
+		          << "[-a/--eta eta] [-f/--fast] [-q/--quiet]" << std::endl
 		          << "Options:" << std::endl
 		          << "\t-h, --help    Displays this page" << std::endl
+		          << "\t-n, --nn nnFile    Path to the neural network file" << std::endl
 		          << "\t-i, --inFile inFile    Path to the input file"
 		          << "\t-o, --outFile outFile    Path to the output file"
 		          << "\t-t, --train    Runs the tool in the training mode. Requires output file" << std::endl
-		          << "\t-n, --nn nnFile    Path to the neural network file" << std::endl
 		          << "\t-p, --topology topology    Topology to use for the neural network" << std::endl
+		          << "\t-e, --epochs    Number of epochs to use during training" << std::endl
+		          << "\t-a, --eta    Eta (learning rate) of the network" << std::endl
 		          << "\t-q, --quiet    Do not print anything to stdout except the end result" << std::endl
 		          << "\t-f, --fast    Enables multithreading. May severely impact accuracy in some cases" << std::endl;
 		std::exit(0);
@@ -182,7 +186,6 @@ int main(int argc, char* argv[]) {
 		}
 
 		NeuralNetwork nn {topology};
-		std::ofstream nnFile {nnFilename.second.front(), std::ios::out};
 		if (fast.first) {
 			nn.fastTrain(in, out, etaInput.first? std::stof(etaInput.second.front()) : 0.001f,
 					epochInput.first? std::stoull(epochInput.second.front()) : 10);
@@ -190,7 +193,7 @@ int main(int argc, char* argv[]) {
 			nn.train(in, out, etaInput.first? std::stof(etaInput.second.front()) : 0.001f,
 					epochInput.first? std::stoull(epochInput.second.front()) : 10);
 		}
-		nnFile << nn;
+		writeFile(nnFilename.second.front(), nn);
 	}
 	return 0;
 }
