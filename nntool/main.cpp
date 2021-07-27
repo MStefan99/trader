@@ -17,6 +17,7 @@ static const strings etaOptions {"-a", "--eta"};
 static const strings helpOptions {"-h", "--help"};
 static const strings topologyOptions {"-p", "--topology"};
 static const strings quietOptions {"-q", "--quiet"};
+static const strings fastOptions {"-f", "--fast"};
 
 
 static std::pair<bool, strings> getParameter(int argc, char* argv[],
@@ -66,11 +67,6 @@ static void writeFile(const std::string& filename, T& data) {
 }
 
 
-float getResult(float a, float b) {
-	return (a - 2) / 3 + 7 * (b + 5) - 11;
-}
-
-
 int main(int argc, char* argv[]) {
 	auto help {getParameter(argc, argv, helpOptions, 0)};
 
@@ -88,7 +84,8 @@ int main(int argc, char* argv[]) {
 		          << "\t-t, --train    Runs the tool in the training mode. Requires output file" << std::endl
 		          << "\t-n, --nn nnFile    Path to the neural network file" << std::endl
 		          << "\t-p, --topology topology    Topology to use for the neural network" << std::endl
-		          << "\t-q, --quiet    Do not print anything to stdout except the end result" << std::endl;
+		          << "\t-q, --quiet    Do not print anything to stdout except the end result" << std::endl
+		          << "\t-f, --fast    Enables multithreading. May severely impact accuracy in some cases" << std::endl;
 		std::exit(0);
 	}
 
@@ -97,6 +94,7 @@ int main(int argc, char* argv[]) {
 	auto outFilename {getParameter(argc, argv, outOptions)};
 	auto nnFilename {getParameter(argc, argv, nnOptions)};
 	auto quiet {getParameter(argc, argv, quietOptions, 0)};
+	auto fast {getParameter(argc, argv, fastOptions, 0)};
 
 	if (!train.first) {  // Feedforward mode
 		Column in {};
@@ -158,20 +156,26 @@ int main(int argc, char* argv[]) {
 		auto etaInput {getParameter(argc, argv, etaOptions)};
 
 		if (topologyInput.first) {
-			// Read topology
+//			std::cin >> topology;
 		} else {  // Using default topology if not specified
 			if (!quiet.first) {
 				std::cout << "No topology specified. Using default: "
-				          << in.front().size() << "," << out.front().size() << std::endl;
+				          << in.front().size() << ",10," << out.front().size() << std::endl;
 			}
 			topology.push_back(in.front().size());
+			topology.push_back(10);
 			topology.push_back(out.front().size());
 		}
 
 		NeuralNetwork nn {topology};
 		std::ofstream nnFile {nnFilename.second.front(), std::ios::out};
-		nn.fastTrain(in, out, etaInput.first? std::stof(etaInput.second.front()) : 0.001f,
-				epochInput.first? std::stoull(epochInput.second.front()): 10);
+		if (fast.first) {
+			nn.fastTrain(in, out, etaInput.first? std::stof(etaInput.second.front()) : 0.001f,
+					epochInput.first? std::stoull(epochInput.second.front()) : 10);
+		} else {
+			nn.train(in, out, etaInput.first? std::stof(etaInput.second.front()) : 0.001f,
+					epochInput.first? std::stoull(epochInput.second.front()) : 10);
+		}
 		nnFile << nn;
 	}
 	return 0;
