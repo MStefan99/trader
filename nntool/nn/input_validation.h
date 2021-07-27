@@ -17,7 +17,8 @@ std::basic_istream<char, Traits>& operator>>(std::basic_istream<char, Traits>& i
 
 	in.read(&buffer, 1);
 	if (buffer != c) {
-		throw std::runtime_error("Error while parsing the input");
+		throw std::runtime_error(std::string {"Error while parsing the input. Expected: '"}
+				+ c + "', got: '" + buffer + "'.");
 	}
 
 	return in;
@@ -31,7 +32,8 @@ std::basic_istream<char, Traits>& operator>>(std::basic_istream<char, Traits>& i
 
 	in.read(buffer, N - 1);
 	if (strncmp(buffer, s, N - 1)) {
-		throw std::runtime_error("Error while parsing the input");
+		throw std::runtime_error(std::string {"Error while parsing the input. Expected: '"}
+				+ s + "', got: '" + buffer + "'.");
 	}
 
 	return in;

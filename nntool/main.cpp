@@ -89,24 +89,24 @@ int main(int argc, char* argv[]) {
 
 	if (help.first) {
 		std::cout << "Trader NN Tool" << std::endl
-		          << "This tool is a core component of a trader application, making stock price predictions."
-		          << std::endl << std::endl
-		          << "Usage:" << std::endl
-		          << "\t ./tool [-h/--help] -n/--nn nnFile [-i/--in inFile] [-o/--out outFile] "
-		          << "[-t/--train] [-v/--verify] [-p/--topology topology] [-e/--epochs epochs] "
-		          << "[-a/--eta eta] [-f/--fast] [-q/--quiet]" << std::endl
-		          << "Options:" << std::endl
-		          << "\t-h, --help    Displays this page" << std::endl
-		          << "\t-n, --nn nnFile    Path to the neural network file" << std::endl
-		          << "\t-i, --inFile inFile    Path to the input file"
-		          << "\t-o, --outFile outFile    Path to the output file"
-		          << "\t-t, --train    Runs the tool in the training mode. Requires output file" << std::endl
-		          << "\t-v, --verify    Verifies the training results on up to 100 examples" << std::endl
-		          << "\t-p, --topology topology    Topology to use for the neural network" << std::endl
-		          << "\t-e, --epochs    Number of epochs to use during training" << std::endl
-		          << "\t-a, --eta    Eta (learning rate) of the network" << std::endl
-		          << "\t-q, --quiet    Do not print anything to stdout except the end result" << std::endl
-		          << "\t-f, --fast    Enables multithreading. May severely impact accuracy in some cases" << std::endl;
+				<< "This tool is a core component of a trader application, making stock price predictions."
+				<< std::endl << std::endl
+				<< "Usage:" << std::endl
+				<< "\t ./tool [-h/--help] -n/--nn nnFile [-i/--in inFile] [-o/--out outFile] "
+				<< "[-t/--train] [-v/--verify] [-p/--topology topology] [-e/--epochs epochs] "
+				<< "[-a/--eta eta] [-f/--fast] [-q/--quiet]" << std::endl
+				<< "Options:" << std::endl
+				<< "\t-h, --help    Displays this page" << std::endl
+				<< "\t-n, --nn nnFile    Path to the neural network file" << std::endl
+				<< "\t-i, --inFile inFile    Path to the input file"
+				<< "\t-o, --outFile outFile    Path to the output file"
+				<< "\t-t, --train    Runs the tool in the training mode. Requires output file" << std::endl
+				<< "\t-v, --verify    Verifies the training results on up to 100 examples" << std::endl
+				<< "\t-p, --topology topology    Topology to use for the neural network" << std::endl
+				<< "\t-e, --epochs    Number of epochs to use during training" << std::endl
+				<< "\t-a, --eta    Eta (learning rate) of the network" << std::endl
+				<< "\t-q, --quiet    Do not print anything to stdout except the end result" << std::endl
+				<< "\t-f, --fast    Enables multithreading. May severely impact accuracy in some cases" << std::endl;
 		std::exit(0);
 	}
 
@@ -118,32 +118,42 @@ int main(int argc, char* argv[]) {
 	auto quiet {getParameter(argc, argv, quietOptions, 0)};
 	auto fast {getParameter(argc, argv, fastOptions, 0)};
 
-	if (train.first || verify.first) {  // Training mode
-		if (!nnFilename.first) {
-			std::cerr << "No neural network file specified, neural network won't be saved!" << std::endl;
-			std::exit(5);
-		}
+	if (!nnFilename.first) {
+		std::cerr << "No neural network file specified" << std::endl;
+		std::exit(3);
+	}
 
+	if (train.first || verify.first) {  // Training mode
 		Rows in {};
 		Rows out {};
 		std::vector<size_t> topology {};
 
-		if (inFilename.first) {  // Reading inputs from file
-			readFile(inFilename.second.front(), in);
-		} else {  // Reading inputs from stdin if not passed as an argument
-			if (!quiet.first) {
-				std::cerr << "No input file specified. Rerun the tool with 'in' option or use stdin: " << std::endl;
+		try {
+			if (inFilename.first) {  // Reading inputs from file
+				readFile(inFilename.second.front(), in);
+			} else {  // Reading inputs from stdin if not passed as an argument
+				if (!quiet.first) {
+					std::cerr << "No input file specified. Rerun the tool with '-i' option or use stdin: " << std::endl;
+				}
+				std::cin >> in;
 			}
-			std::cin >> in;
+		} catch (const std::exception& e) {
+			std::cerr << "An error occurred while reading inputs from file: " << e.what() << std::endl;
+			std::exit(-1);
 		}
 
-		if (outFilename.first) {  // Reading outputs from file
-			readFile(outFilename.second.front(), out);
-		} else {  // Reading outputs from stdin if not passed as an argument
-			if (!quiet.first) {
-				std::cout << "No output file specified. Rerun the tool with 'out' option or use stdin: " << std::endl;
+		try {
+			if (outFilename.first) {  // Reading outputs from file
+				readFile(outFilename.second.front(), out);
+			} else {  // Reading outputs from stdin if not passed as an argument
+				if (!quiet.first) {
+					std::cout << "No output file specified. Rerun the tool with '-o' option or use stdin: " << std::endl;
+				}
+				std::cin >> out;
 			}
-			std::cin >> out;
+		} catch (const std::exception& e) {
+			std::cerr << "An error occurred while reading outputs from file: " << e.what() << std::endl;
+			std::exit(-1);
 		}
 
 		if (train.first) {
@@ -156,7 +166,7 @@ int main(int argc, char* argv[]) {
 			} else {  // Using default topology if not specified
 				if (!quiet.first) {
 					std::cout << "No topology specified. Using default: "
-					          << in.front().size() << ",10," << out.front().size() << std::endl;
+							<< in.front().size() << ",10," << out.front().size() << std::endl;
 				}
 				topology.push_back(in.front().size());
 				topology.push_back(10);
@@ -164,19 +174,30 @@ int main(int argc, char* argv[]) {
 			}
 
 			NeuralNetwork nn {topology};
-			if (fast.first) {
-				nn.fastTrain(in, out, etaInput.first? std::stof(etaInput.second.front()) : 0.001f,
-						epochInput.first? std::stoull(epochInput.second.front()) : 10);
-			} else {
-				nn.train(in, out, etaInput.first? std::stof(etaInput.second.front()) : 0.001f,
-						epochInput.first? std::stoull(epochInput.second.front()) : 10);
+			try {
+				if (fast.first) {
+					nn.fastTrain(in, out, etaInput.first? std::stof(etaInput.second.front()) : 0.001f,
+							epochInput.first? std::stoull(epochInput.second.front()) : 10);
+				} else {
+					nn.train(in, out, etaInput.first? std::stof(etaInput.second.front()) : 0.001f,
+							epochInput.first? std::stoull(epochInput.second.front()) : 10);
+				}
+			} catch (const std::exception& e) {
+				std::cerr << "An error occurred while training: " << e.what() << std::endl;
+				std::exit(-1);
 			}
 			writeFile(nnFilename.second.front(), nn);
 		}
 
 		if (verify.first) {
 			NeuralNetwork nn {};
-			readFile(nnFilename.second.front(), nn);
+
+			try {
+				readFile(nnFilename.second.front(), nn);
+			} catch (const std::exception& e) {
+				std::cerr << "An error occurred while loading neural network: " << e.what() << std::endl;
+				std::exit(-1);
+			}
 
 			float error {};
 			size_t verifySize {in.size() < MAX_VERIFY_SIZE? in.size() : MAX_VERIFY_SIZE};
@@ -189,22 +210,27 @@ int main(int argc, char* argv[]) {
 		}
 	} else {  // Feedforward mode
 		Column in {};
+		NeuralNetwork nn;
 
-		if (!nnFilename.first) {  // Checking if NN file specified
-			std::cout << "No NN specified, please rerun with 'nn' option";
-			std::exit(5);
+		try {
+			readFile(nnFilename.second.front(), nn);
+		} catch (const std::exception& e) {
+			std::cerr << "An error occurred while loading neural network: " << e.what() << std::endl;
+			std::exit(-1);
 		}
 
-		NeuralNetwork nn;
-		readFile(nnFilename.second.front(), nn);
-
-		if (!inFilename.first) {  // Reading inputs from stdin if not passed as an argument
-			if (!quiet.first) {
-				std::cout << "No input file specified. Rerun the tool with 'in' option or use stdin: " << std::endl;
+		try {
+			if (!inFilename.first) {  // Reading inputs from stdin if not passed as an argument
+				if (!quiet.first) {
+					std::cout << "No input file specified. Rerun the tool with '-i' option or use stdin: " << std::endl;
+				}
+				std::cin >> in;
+			} else {
+				readFile(inFilename.second.front(), in);
 			}
-			std::cin >> in;
-		} else {
-			readFile(inFilename.second.front(), in);
+		} catch (const std::exception& e) {
+			std::cerr << "An error occurred while reading inputs from file: " << e.what() << std::endl;
+			std::exit(-1);
 		}
 
 		Column out {nn.feedforward(in)};
