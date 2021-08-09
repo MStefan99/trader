@@ -6,7 +6,7 @@
 #include "NeuralNetwork.h"
 
 
-#define MAX_VERIFY_SIZE 100
+#define MAX_VERIFY_SIZE 100  // TODO: replace with cli parameter
 
 typedef std::vector<std::string> strings;
 
@@ -24,7 +24,7 @@ static const strings fastOptions {"-f", "--fast"};
 
 
 static std::pair<bool, strings> getParameter(int argc, char* argv[],
-		const strings& names, size_t len = 1) {
+		const strings& names, size_t len = 0) {
 	strings results {};
 	bool found {};
 
@@ -112,9 +112,9 @@ int main(int argc, char* argv[]) {
 
 	auto train {getParameter(argc, argv, trainOptions, 0)};
 	auto verify {getParameter(argc, argv, verifyOptions, 0)};
-	auto inFilename {getParameter(argc, argv, inOptions)};
-	auto outFilename {getParameter(argc, argv, outOptions)};
-	auto nnFilename {getParameter(argc, argv, nnOptions)};
+	auto inFilename {getParameter(argc, argv, inOptions, 1)};
+	auto outFilename {getParameter(argc, argv, outOptions, 1)};
+	auto nnFilename {getParameter(argc, argv, nnOptions, 1)};
 	auto quiet {getParameter(argc, argv, quietOptions, 0)};
 	auto fast {getParameter(argc, argv, fastOptions, 0)};
 
