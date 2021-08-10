@@ -5,7 +5,7 @@ const childProcess = require('child_process');
 
 
 module.exports = function (options) {
-	if (!process.env.NNTOOL ?? options.toolPath) {
+	if (!process.env.NNTOOL && !options.toolPath) {
 		throw new Error('Neural Network executable not specified. Run with NNTOOL ' +
 				'environment variable or specify toolPath parameter.')
 	}
@@ -40,7 +40,9 @@ module.exports = function (options) {
 			inString += val + '\n';
 		}
 
-		const nnProcess = childProcess.execFile(_exe, ['-q', '-n', _nnFile], (error, stdout) => {
+		const nnProcess = childProcess.execFile(_exe, ['-q', '-n', _nnFile], {
+			timeout: 10 * 1000,
+		}, (error, stdout) => {
 			if (error && cb) {
 				err?.(error);
 			}
