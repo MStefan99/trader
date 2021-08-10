@@ -157,9 +157,9 @@ int main(int argc, char* argv[]) {
 		}
 
 		if (train.first) {
-			auto topologyInput {getParameter(argc, argv, topologyOptions)};
-			auto epochInput {getParameter(argc, argv, epochOptions)};
-			auto etaInput {getParameter(argc, argv, etaOptions)};
+			auto topologyInput {getParameter(argc, argv, topologyOptions, 1)};
+			auto epochInput {getParameter(argc, argv, epochOptions, 1)};
+			auto etaInput {getParameter(argc, argv, etaOptions, 1)};
 
 			if (topologyInput.first) {  // Reading topology
 				topology = readTopology(topologyInput.second.front());
