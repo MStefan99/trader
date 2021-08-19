@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Predict" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="-n nn.txt" REDIRECT_INPUT="true" REDIRECT_INPUT_PATH="$ProjectFileDir$/nntool/samples/data.txt" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" WORKING_DIR="file://$ProjectFileDir$/nntool/samples" PASS_PARENT_ENVS_2="true" PROJECT_NAME="trader" TARGET_NAME="trader" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="trader" RUN_TARGET_NAME="trader">
+  <configuration default="false" name="Predict" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="-n nn.txt -q" REDIRECT_INPUT="true" REDIRECT_INPUT_PATH="$ProjectFileDir$/nntool/samples/data.txt" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" WORKING_DIR="file://$ProjectFileDir$/nntool/samples" PASS_PARENT_ENVS_2="true" PROJECT_NAME="trader" TARGET_NAME="trader" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="trader" RUN_TARGET_NAME="trader">
     <method v="2">
       <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
     </method>
