@@ -620,3 +620,6 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
+
+# Custom rules
+data/
