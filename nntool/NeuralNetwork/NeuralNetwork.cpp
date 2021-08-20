@@ -23,13 +23,8 @@ NeuralNetwork::NeuralNetwork(std::vector<size_t> topology):
 		throw std::runtime_error("Empty topology");
 	}
 
-	for (const auto& layer: _topology) {
-		std::vector<float> biases {};
-		biases.resize(layer);
-		_biases.emplace_back(biases);
-	}
-
 	for (auto it {++topology.begin()}; it != topology.end(); ++it) {
+		_biases.emplace_back(1, *it);
 		_weights.emplace_back(*(it - 1), *it);
 		_weights.back().randomize();
 	}
@@ -47,10 +42,9 @@ std::vector<float> NeuralNetwork::feedforward(const std::vector<float>& input) c
 	}
 	Matrix activation {input};
 
-	activation = activation + _biases[0];
 	for (size_t i {1}; i < _topology.size(); ++i) {
 		activation = _weights[i - 1] * activation;
-		activation = activation + _biases[i];
+		activation = activation + _biases[i - 1];
 	}
 	return static_cast<std::vector<float>>(activation);
 }
@@ -64,10 +58,9 @@ void NeuralNetwork::propagateBackwards(const std::vector<float>& input,
 	std::vector<Matrix> activations {};
 	Matrix activation {input};
 
-	activation = activation + _biases[0];
 	activations.push_back(activation);
-	for (size_t i {1}; i < _topology.size(); ++i) {
-		activation = _weights[i - 1] * activation;
+	for (size_t i {0}; i < _topology.size() -1; ++i) {
+		activation = _weights[i] * activation;
 		activation = activation + _biases[i];
 		activations.push_back(activation);
 	}
@@ -250,7 +243,7 @@ std::istream& operator>>(std::istream& in, NeuralNetwork& network) {
 		in >> network._weights[i];
 	}
 
-	for (size_t i {}; i < topologySize; ++i) {
+	for (size_t i {}; i < topologySize - 1; ++i) {
 		in >> network._biases[i];
 	}
 
