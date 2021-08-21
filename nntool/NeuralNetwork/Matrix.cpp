@@ -17,7 +17,7 @@ Matrix::Matrix(size_t w, size_t h):
 void Matrix::randomize() {
 	std::random_device randomDevice;
 	std::mt19937 generator(randomDevice());
-	std::uniform_real_distribution<float> distribution {-.1, .1};
+	std::uniform_real_distribution<scalar> distribution {-.1, .1};
 
 	for (size_t j {0}; j < _h; ++j) {
 		for (size_t i {0}; i < _w; ++i) {
@@ -27,10 +27,10 @@ void Matrix::randomize() {
 }
 
 
-Matrix::Matrix(const std::initializer_list<std::initializer_list<float>>& values):
+Matrix::Matrix(const std::initializer_list<std::initializer_list<scalar>>& values):
 		_w {values.begin()->size()}, _h {values.size()} {
 	for (const auto& row : values) {
-		std::vector<float> v {};
+		std::vector<scalar> v {};
 		for (auto value: row) {
 			v.push_back(value);
 		}
@@ -39,15 +39,15 @@ Matrix::Matrix(const std::initializer_list<std::initializer_list<float>>& values
 }
 
 
-Matrix::Matrix(const std::vector<float>& vector):
+Matrix::Matrix(const std::vector<scalar>& vector):
 		_w {1}, _h {vector.size()} {
 	for (size_t i {0}; i < vector.size(); ++i) {
-		_values.push_back(std::vector<float> {vector[i]});
+		_values.push_back(std::vector<scalar> {vector[i]});
 	}
 }
 
 
-Matrix::Matrix(const std::vector<std::vector<float>>& vector):
+Matrix::Matrix(const std::vector<std::vector<scalar>>& vector):
 		_w {vector.front().size()}, _h {vector.size()} {
 	for (size_t i {0}; i < vector.size(); ++i) {
 		_values.emplace_back(vector[i]);
@@ -55,12 +55,12 @@ Matrix::Matrix(const std::vector<std::vector<float>>& vector):
 }
 
 
-std::vector<float>& Matrix::operator[](size_t i) {
+std::vector<scalar>& Matrix::operator[](size_t i) {
 	return _values[i];
 }
 
 
-const std::vector<float>& Matrix::operator[](size_t i) const {
+const std::vector<scalar>& Matrix::operator[](size_t i) const {
 	return _values[i];
 }
 
@@ -77,7 +77,7 @@ Matrix Matrix::transpose() const {
 }
 
 
-Matrix Matrix::operator*(float scalar) const {
+Matrix Matrix::operator*(scalar scalar) const {
 	Matrix result {_w, _h};
 
 	for (size_t j {0}; j < _h; ++j) {
@@ -89,7 +89,7 @@ Matrix Matrix::operator*(float scalar) const {
 }
 
 
-Matrix Matrix::operator/(float scalar) const {
+Matrix Matrix::operator/(scalar scalar) const {
 	Matrix result {_w, _h};
 
 	for (size_t j {0}; j < _h; ++j) {
@@ -111,7 +111,7 @@ Matrix Matrix::operator*(const Matrix& matrix) const {
 	Matrix result {matrix._w, _h};
 	for (size_t j {0}; j < matrix._w; ++j) {
 		for (size_t i {0}; i < _h; ++i) {
-			float sum {0};
+			scalar sum {0};
 			for (size_t k {0}; k < _w; ++k) {
 				sum += _values[i][k] * matrix._values[k][j];
 			}
@@ -122,7 +122,7 @@ Matrix Matrix::operator*(const Matrix& matrix) const {
 }
 
 
-Matrix Matrix::operator*(const std::vector<float>& vector) const {
+Matrix Matrix::operator*(const std::vector<scalar>& vector) const {
 	if (vector.size() == 1) {
 		return operator*(vector[0]);
 	} else if (_w != 1 || _h != vector.size()) {
@@ -138,7 +138,7 @@ Matrix Matrix::operator*(const std::vector<float>& vector) const {
 }
 
 
-Matrix& Matrix::operator*=(float scalar) {
+Matrix& Matrix::operator*=(scalar scalar) {
 	for (size_t j {0}; j < _h; ++j) {
 		for (size_t i {0}; i < _w; ++i) {
 			_values[j][i] = _values[j][i] * scalar;
@@ -166,7 +166,7 @@ Matrix& Matrix::operator*=(const Matrix& matrix) {
 }
 
 
-Matrix& Matrix::operator*=(const std::vector<float>& vector) {
+Matrix& Matrix::operator*=(const std::vector<scalar>& vector) {
 	if (vector.size() == 1) {
 		return operator*=(vector[0]);
 	} else if (_w != 1) {
@@ -196,7 +196,7 @@ Matrix Matrix::operator+(const Matrix& matrix) const {
 }
 
 
-Matrix Matrix::operator+(const std::vector<float>& vector) const {
+Matrix Matrix::operator+(const std::vector<scalar>& vector) const {
 	if (_w != 1) {
 		throw std::length_error("Matrix dimension mismatch");
 	}
@@ -224,7 +224,7 @@ Matrix& Matrix::operator+=(const Matrix& matrix) {
 }
 
 
-Matrix& Matrix::operator+=(const std::vector<float>& vector) {
+Matrix& Matrix::operator+=(const std::vector<scalar>& vector) {
 	if (_w != 1) {
 		throw std::length_error("Matrix dimension mismatch");
 	}
@@ -271,12 +271,12 @@ Matrix Matrix::concat(const Matrix& matrix) const {
 }
 
 
-Matrix::operator std::vector<float>() const {
+Matrix::operator std::vector<scalar>() const {
 	if (_w != 1) {
 		throw std::length_error("Matrix dimension mismatch");
 	}
 
-	std::vector<float> result {};
+	std::vector<scalar> result {};
 
 	for (const auto& v: _values) {
 		result.push_back(v[0]);
@@ -285,7 +285,7 @@ Matrix::operator std::vector<float>() const {
 }
 
 
-Matrix::operator std::vector<std::vector<float>>() const {
+Matrix::operator std::vector<std::vector<scalar>>() const {
 	return _values;
 }
 

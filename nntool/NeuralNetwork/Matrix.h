@@ -12,42 +12,44 @@
 
 #include "input_validation.h"
 
+typedef float scalar;
+
 
 class Matrix {
 public:
 	explicit Matrix(size_t w = 1, size_t h = 1);
-	explicit Matrix(const std::vector<float>& vector);
-	explicit Matrix(const std::vector<std::vector<float>>& vector);
-	Matrix(const std::initializer_list<std::initializer_list<float>>& list);
+	explicit Matrix(const std::vector<scalar>& vector);
+	explicit Matrix(const std::vector<std::vector<scalar>>& vector);
+	Matrix(const std::initializer_list<std::initializer_list<scalar>>& list);
 
 	void randomize();
 
-	std::vector<float>& operator[](size_t i);
-	const std::vector<float>& operator[](size_t i) const;
+	std::vector<scalar>& operator[](size_t i);
+	const std::vector<scalar>& operator[](size_t i) const;
 
 	Matrix transpose() const;
 
-	Matrix operator*(float scalar) const;
-	Matrix operator/(float scalar) const;
+	Matrix operator*(scalar scalar) const;
+	Matrix operator/(scalar scalar) const;
 
 	Matrix operator*(const Matrix& matrix) const;
-	Matrix operator*(const std::vector<float>& vector) const;
+	Matrix operator*(const std::vector<scalar>& vector) const;
 
-	Matrix& operator*=(float scalar);
+	Matrix& operator*=(scalar scalar);
 	Matrix& operator*=(const Matrix& matrix);
-	Matrix& operator*=(const std::vector<float>& vector);
+	Matrix& operator*=(const std::vector<scalar>& vector);
 
 	Matrix operator+(const Matrix& matrix) const;
-	Matrix operator+(const std::vector<float>& vector) const;
+	Matrix operator+(const std::vector<scalar>& vector) const;
 
 	Matrix& operator+=(const Matrix& matrix);
-	Matrix& operator+=(const std::vector<float>& vector);
+	Matrix& operator+=(const std::vector<scalar>& vector);
 
 	Matrix multiplyComponents(const Matrix& matrix) const;
 	Matrix concat(const Matrix& matrix) const;
 
-	explicit operator std::vector<float>() const;
-	explicit operator std::vector<std::vector<float>>() const;
+	explicit operator std::vector<scalar>() const;
+	explicit operator std::vector<std::vector<scalar>>() const;
 
 	size_t getWidth() const;
 	size_t getHeight() const;
@@ -56,7 +58,7 @@ public:
 	friend std::istream& operator>>(std::istream& in, Matrix& matrix);
 
 protected:
-	std::vector<std::vector<float>> _values {};
+	std::vector<std::vector<scalar>> _values {};
 	size_t _w {};
 	size_t _h {};
 };

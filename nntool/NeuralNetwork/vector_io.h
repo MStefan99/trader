@@ -11,10 +11,10 @@
 #include "Matrix.h"
 
 
-std::ostream& operator<<(std::ostream& out, const std::vector<float>& vector);
-std::istream& operator>>(std::istream& in, std::vector<float>& vector);
+std::ostream& operator<<(std::ostream& out, const std::vector<scalar>& vector);
+std::istream& operator>>(std::istream& in, std::vector<scalar>& vector);
 
-std::ostream& operator<<(std::ostream& out, const std::vector<std::vector<float>>& vector);
-std::istream& operator>>(std::istream& in, std::vector<std::vector<float>>& vector);
+std::ostream& operator<<(std::ostream& out, const std::vector<std::vector<scalar>>& vector);
+std::istream& operator>>(std::istream& in, std::vector<std::vector<scalar>>& vector);
 
 #endif //TRADER_VECTOR_IO_H
