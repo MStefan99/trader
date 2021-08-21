@@ -89,6 +89,10 @@ void NeuralNetwork::train(const Rows& inputs, const Rows& outputs,
 			propagateBackwards(inputs[i], outputs[i], eta);
 		}
 	}
+
+	if (std::isnan(_weights[0][0][0])) {
+		throw std::runtime_error("NaN value detected. Try lowering the Eta.");
+	}
 }
 
 
