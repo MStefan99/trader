@@ -133,19 +133,14 @@ void NeuralNetwork::fastTrain(const Rows& inputs, const Rows& outputs,
 
 	for (size_t i {0}; i < _topology.size() - 1; ++i) {
 		weights.clear();
-
-		for (const auto& n: networks) {
-			weights.push_back(n._weights[i]);
-		}
-		_weights[i] = avg(weights);
-	}
-
-	for (size_t i {0}; i < _topology.size(); ++i) {
 		biases.clear();
 
 		for (const auto& n: networks) {
+			weights.push_back(n._weights[i]);
 			biases.push_back(n._biases[i]);
 		}
+
+		_weights[i] = avg(weights);
 		_biases[i] = avg(biases);
 	}
 }
