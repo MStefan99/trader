@@ -21,6 +21,7 @@ public:
 	explicit Matrix(const std::vector<scalar>& vector);
 	explicit Matrix(const std::vector<std::vector<scalar>>& vector);
 	Matrix(const std::initializer_list<std::initializer_list<scalar>>& list);
+	static Matrix identity(size_t order);
 
 	void randomize();
 
@@ -28,21 +29,20 @@ public:
 	const std::vector<scalar>& operator[](size_t i) const;
 
 	Matrix transpose() const;
+	Matrix invert() const;
 
-	Matrix operator*(scalar scalar) const;
-	Matrix operator/(scalar scalar) const;
+	Matrix operator*(scalar multiplier) const;
+	Matrix& operator*=(scalar multiplier);
+
+	Matrix operator/(scalar divisor) const;
+	Matrix& operator/=(scalar divisor);
 
 	Matrix operator*(const Matrix& matrix) const;
 	Matrix operator*(const std::vector<scalar>& vector) const;
 
-	Matrix& operator*=(scalar scalar);
-	Matrix& operator*=(const Matrix& matrix);
-	Matrix& operator*=(const std::vector<scalar>& vector);
-
 	Matrix operator+(const Matrix& matrix) const;
-	Matrix operator+(const std::vector<scalar>& vector) const;
-
 	Matrix& operator+=(const Matrix& matrix);
+	Matrix operator+(const std::vector<scalar>& vector) const;
 	Matrix& operator+=(const std::vector<scalar>& vector);
 
 	Matrix multiplyComponents(const Matrix& matrix) const;

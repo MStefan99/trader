@@ -3,12 +3,4 @@
   <component name="CMakeWorkspace" PROJECT_DIR="$PROJECT_DIR$/nntool">
     <contentRoot DIR="$PROJECT_DIR$" />
   </component>
-  <component name="CidrRootsConfiguration">
-    <sourceRoots>
-      <file path="$PROJECT_DIR$/nntool" />
-    </sourceRoots>
-    <libraryRoots>
-      <file path="$PROJECT_DIR$/nntool/lib" />
-    </libraryRoots>
-  </component>
 </project>

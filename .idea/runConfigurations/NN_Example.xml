@@ -1,0 +1,8 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="NN Example" type="NodeJSConfigurationType" path-to-js-file="nn_example.js" working-dir="$PROJECT_DIR$/nntool">
+    <envs>
+      <env name="NNTOOL" value="..\nntool\cmake-build-windows\trader.exe" />
+    </envs>
+    <method v="2" />
+  </configuration>
+</component>

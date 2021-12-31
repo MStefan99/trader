@@ -55,6 +55,17 @@ Matrix::Matrix(const std::vector<std::vector<scalar>>& vector):
 }
 
 
+Matrix Matrix::identity(size_t order) {
+	Matrix result {order, order};
+
+	for (size_t i {0}; i < order; ++i) {
+		result[i][i] = 1;
+	}
+
+	return result;
+}
+
+
 std::vector<scalar>& Matrix::operator[](size_t i) {
 	return _values[i];
 }
@@ -74,6 +85,43 @@ Matrix Matrix::transpose() const {
 		}
 	}
 	return result;
+}
+
+
+Matrix Matrix::invert() const {
+	if (_w != _h) {
+		throw std::length_error("Matrix not square");
+	}
+
+	Matrix temp {*this};
+	Matrix augmented {Matrix::identity(_w)};
+
+	// Gaussian elimination
+	for (size_t r1 {0}; r1 < _w; ++r1) {
+		for (size_t r2 {0}; r2 < _w; ++r2) {
+			if (r1 == r2) {
+				continue;
+			}
+
+			scalar factor {temp[r2][r1] / temp[r1][r1]};
+
+			for (size_t i {0}; i < _w; ++i) {
+				temp[r2][i] -= factor * temp[r1][i];
+				augmented[r2][i] -= factor * augmented[r1][i];
+			}
+		}
+	}
+
+	// Gaining identity matrix
+	for (size_t r {0}; r < _w; ++r) {
+		scalar factor = 1 / temp[r][r];
+
+		for (size_t i {0}; i < _w; ++i) {
+			augmented[r][i] *= factor;
+		}
+	}
+
+	return augmented;
 }
 
 
@@ -98,6 +146,16 @@ Matrix Matrix::operator/(scalar scalar) const {
 		}
 	}
 	return result;
+}
+
+
+Matrix& Matrix::operator/=(scalar scalar) {
+	for (size_t j {0}; j < _h; ++j) {
+		for (size_t i {0}; i < _w; ++i) {
+			_values[j][i] /= scalar;
+		}
+	}
+	return *this;
 }
 
 
@@ -143,38 +201,6 @@ Matrix& Matrix::operator*=(scalar scalar) {
 		for (size_t i {0}; i < _w; ++i) {
 			_values[j][i] = _values[j][i] * scalar;
 		}
-	}
-	return *this;
-}
-
-
-Matrix& Matrix::operator*=(const Matrix& matrix) {
-	if (matrix._w == 1 && matrix._h == 1) {
-		return operator*=(matrix[0][0]);
-	} else if (_w != matrix._h) {
-		throw std::length_error("Matrix dimension mismatch");
-	}
-
-	for (size_t j {0}; j < matrix._w; ++j) {
-		for (size_t i {0}; i < _h; ++i) {
-			for (size_t k {0}; k < _w; ++k) {
-				_values[i][j] += _values[i][k] * matrix._values[k][j];
-			}
-		}
-	}
-	return *this;
-}
-
-
-Matrix& Matrix::operator*=(const std::vector<scalar>& vector) {
-	if (vector.size() == 1) {
-		return operator*=(vector[0]);
-	} else if (_w != 1) {
-		throw std::length_error("Matrix dimension mismatch");
-	}
-
-	for (size_t j {0}; j < vector.size(); ++j) {
-		_values[0][j] = _values[0][j] * vector[j];
 	}
 	return *this;
 }

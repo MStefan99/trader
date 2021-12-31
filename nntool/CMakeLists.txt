@@ -12,4 +12,6 @@ endif ()
 add_subdirectory(NeuralNetwork)
 
 add_executable(trader main.cpp)
+add_executable(test test.cpp)
 target_link_libraries(trader NeuralNetwork)
+target_link_libraries(test Matrix)

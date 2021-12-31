@@ -7,3 +7,12 @@ target_sources(NeuralNetwork PRIVATE
 		)
 
 target_include_directories(NeuralNetwork PUBLIC .)
+
+add_library(Matrix STATIC)
+
+target_sources(Matrix PRIVATE
+		vector_io.cpp
+		Matrix.cpp
+		)
+
+target_include_directories(Matrix PUBLIC .)

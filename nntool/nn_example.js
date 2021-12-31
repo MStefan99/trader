@@ -5,12 +5,12 @@ const nn = require('./NeuralNetwork');
 
 
 nn()
-		.load('./samples/nn.txt')
-		.feed([2.42228, 6.98474])
+		.load('../trading-data/data/nn.txt')
+		.feed([0.6373,-0.23842])
 		.run(res => console.log(res))
-		.feed([-5.98768, -2.19725])
+		.feed([-0.7073,-0.5676])
 		.run(res => console.log(res))
-		.feed([-9.01402, -4.51559])
+		.feed([-0.8789,0.5338])
 		.run(res => console.log(res))
-		.feed([6.58245, -7.01648])
+		.feed([0.9828,0.8366])
 		.run(res => console.log(res));
