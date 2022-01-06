@@ -123,7 +123,7 @@ void NeuralNetwork::fastTrain(const Rows& inputs, const Rows& outputs,
 	size_t batchSize {inputs.size() / thread_num};
 
 	for (size_t i {0}; i < thread_num; ++i) {
-		networks.emplace_back(_topology);
+		networks.emplace_back(*this);
 
 		threads.emplace_back(&NeuralNetwork::batchTrain, std::ref(networks.back()),
 				std::ref(inputs), std::ref(outputs),

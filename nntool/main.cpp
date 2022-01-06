@@ -106,7 +106,7 @@ int main(int argc, char* argv[]) {
 				<< "\t-e, --epochs    Number of epochs to use during training" << std::endl
 				<< "\t-a, --eta    Eta (learning rate) of the network" << std::endl
 				<< "\t-q, --quiet    Do not print anything to stdout except the end result" << std::endl
-				<< "\t-f, --fast    Enables multithreading. May severely impact accuracy in some cases" << std::endl;
+				<< "\t-f, --fast    Enables multithreading. May slightly decrease accuracy" << std::endl;
 		std::exit(0);
 	}
 
@@ -173,7 +173,12 @@ int main(int argc, char* argv[]) {
 				topology.push_back(out.front().size());
 			}
 
+			if (!quiet.first) {
+				std::cout << "Starting training... This might take a while depending on data amount and epoch count"
+						<< std::endl;
+			}
 			NeuralNetwork nn {topology};
+			auto startTime {std::chrono::system_clock::now()};
 			try {
 				if (fast.first) {
 					nn.fastTrain(in, out, etaInput.first? std::stof(etaInput.second.front()) : 0.001f,
@@ -185,6 +190,11 @@ int main(int argc, char* argv[]) {
 			} catch (const std::exception& e) {
 				std::cerr << "An error occurred while training: " << e.what() << std::endl;
 				std::exit(-1);
+			}
+			auto endTime {std::chrono::system_clock::now()};
+			if (!quiet.first) {
+				std::cout << "Finished training in " << (endTime - startTime).count() / 1000000000.0
+						<< "s" << std::endl;
 			}
 			writeFile(nnFilename.second.front(), nn);
 		}
