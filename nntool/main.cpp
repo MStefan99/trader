@@ -6,8 +6,6 @@
 #include "NeuralNetwork.h"
 
 
-#define MAX_VERIFY_SIZE 100  // TODO: replace with cli parameter
-
 typedef std::vector<std::string> strings;
 
 static const strings inOptions {"-i", "--input"};
@@ -93,7 +91,7 @@ int main(int argc, char* argv[]) {
 				<< std::endl << std::endl
 				<< "Usage:" << std::endl
 				<< "\t ./tool [-h/--help] -n/--nn nnFile [-i/--in inFile] [-o/--out outFile] "
-				<< "[-t/--train] [-v/--verify] [-p/--topology topology] [-e/--epochs epochs] "
+				<< "[-t/--train] [-v/--verify samples] [-p/--topology topology] [-e/--epochs epochs] "
 				<< "[-a/--eta eta] [-f/--fast] [-q/--quiet]" << std::endl
 				<< "Options:" << std::endl
 				<< "\t-h, --help    Displays this page" << std::endl
@@ -101,7 +99,7 @@ int main(int argc, char* argv[]) {
 				<< "\t-i, --inFile inFile    Path to the input file"
 				<< "\t-o, --outFile outFile    Path to the output file"
 				<< "\t-t, --train    Runs the tool in the training mode. Requires output file" << std::endl
-				<< "\t-v, --verify    Verifies the training results on up to 100 examples" << std::endl
+				<< "\t-v, --verify samples    Verifies the training results on a given number of samples" << std::endl
 				<< "\t-p, --topology topology    Topology to use for the neural network" << std::endl
 				<< "\t-e, --epochs    Number of epochs to use during training" << std::endl
 				<< "\t-a, --eta    Eta (learning rate) of the network" << std::endl
@@ -111,7 +109,7 @@ int main(int argc, char* argv[]) {
 	}
 
 	auto train {getParameter(argc, argv, trainOptions, 0)};
-	auto verify {getParameter(argc, argv, verifyOptions, 0)};
+	auto verify {getParameter(argc, argv, verifyOptions, 1)};
 	auto inFilename {getParameter(argc, argv, inOptions, 1)};
 	auto outFilename {getParameter(argc, argv, outOptions, 1)};
 	auto nnFilename {getParameter(argc, argv, nnOptions, 1)};
@@ -210,7 +208,8 @@ int main(int argc, char* argv[]) {
 			}
 
 			float error {};
-			size_t verifySize {in.size() < MAX_VERIFY_SIZE? in.size() : MAX_VERIFY_SIZE};
+			auto size {std::stoi(verify.second.front())};
+			size_t verifySize {in.size() < size? in.size() : size};
 
 			for (size_t i {0}; i < verifySize; ++i) {
 				error += NeuralNetwork::error(nn.feedforward(in[i]), out[i]);
