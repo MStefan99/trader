@@ -21,6 +21,7 @@ static const strings helpOptions {"-h", "--help"};
 static const strings topologyOptions {"-p", "--topology"};
 static const strings quietOptions {"-q", "--quiet"};
 static const strings fastOptions {"-f", "--fast"};
+static const strings progressBar {"-b", "--progress-bar"};
 
 
 static std::pair<bool, strings> getParameter(int argc, char* argv[],
@@ -106,7 +107,8 @@ int main(int argc, char* argv[]) {
 				<< "\t-e, --epochs    Number of epochs to use during training" << std::endl
 				<< "\t-a, --eta    Eta (learning rate) of the network" << std::endl
 				<< "\t-q, --quiet    Do not print anything to stdout except the end result" << std::endl
-				<< "\t-f, --fast    Enables multithreading. May severely impact accuracy in some cases" << std::endl;
+				<< "\t-f, --fast    Enables multithreading. May severely impact accuracy in some cases" 
+				<< "\t-b, --progress-bar Enable progress bar printout." << std::endl;
 		std::exit(0);
 	}
 
@@ -117,6 +119,7 @@ int main(int argc, char* argv[]) {
 	auto nnFilename {getParameter(argc, argv, nnOptions, 1)};
 	auto quiet {getParameter(argc, argv, quietOptions, 0)};
 	auto fast {getParameter(argc, argv, fastOptions, 0)};
+	auto progress {getParameter(argc, argv, progressBar, 0)};
 
 	if (!nnFilename.first) {
 		std::cerr << "No neural network file specified" << std::endl;
@@ -180,7 +183,8 @@ int main(int argc, char* argv[]) {
 							epochInput.first? std::stoull(epochInput.second.front()) : 10);
 				} else {
 					nn.train(in, out, etaInput.first? std::stof(etaInput.second.front()) : 0.001f,
-							epochInput.first? std::stoull(epochInput.second.front()) : 10);
+							epochInput.first? std::stoull(epochInput.second.front()) : 10,
+							progress.first);
 				}
 			} catch (const std::exception& e) {
 				std::cerr << "An error occurred while training: " << e.what() << std::endl;
