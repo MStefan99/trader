@@ -83,10 +83,13 @@ void NeuralNetwork::train(const Rows& inputs, const Rows& outputs,
 	if (inputs.size() != outputs.size()) {
 		throw std::length_error("Input size does not equal output size");
 	}
-
+	const size_t total_iterations = epochs * inputs.size();
+	size_t current_iterations = 0;
 	for (size_t e {0}; e < epochs; ++e) {
 		for (size_t i {0}; i < inputs.size(); ++i) {
 			propagateBackwards(inputs[i], outputs[i], eta);
+			std::cout << "Progress: " << std::fixed << (100.0 * (++current_iterations) / total_iterations) << "%\r";
+			std::cout.flush();
 		}
 	}
 
