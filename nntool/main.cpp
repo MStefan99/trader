@@ -107,7 +107,7 @@ int main(int argc, char* argv[]) {
 				<< "\t-e, --epochs    Number of epochs to use during training" << std::endl
 				<< "\t-a, --eta    Eta (learning rate) of the network" << std::endl
 				<< "\t-q, --quiet    Do not print anything to stdout except the end result" << std::endl
-				<< "\t-f, --fast    Enables multithreading. May severely impact accuracy in some cases" 
+				<< "\t-f, --fast    Enables multithreading. May severely impact accuracy in some cases" << std::endl
 				<< "\t-b, --progress-bar Enable progress bar printout." << std::endl;
 		std::exit(0);
 	}
