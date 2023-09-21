@@ -89,8 +89,12 @@ void NeuralNetwork::train(const Rows& inputs, const Rows& outputs,
 		for (size_t i {0}; i < inputs.size(); ++i) {
 			propagateBackwards(inputs[i], outputs[i], eta);
 			if (printProgress) {
-				std::cout << "Progress: " 
-				<< std::fixed << (100.0 * (++current_iterations) / total_iterations) << "%\r";
+				std::cout.precision(2);
+				std::cout << "Progress: [";
+				for (size_t i {0}; i < 50; ++i) {
+					std::cout << ((static_cast<float>(current_iterations) / total_iterations > static_cast<float>(i) / 50)? "=" : ".");
+				}
+				std::cout << "] " << std::fixed << (100.0 * (++current_iterations) / total_iterations) << "%\r";
 				std::cout.flush();
 			}
 		}
