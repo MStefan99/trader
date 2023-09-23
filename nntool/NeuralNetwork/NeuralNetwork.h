@@ -33,7 +33,7 @@ public:
 
 	void propagateBackwards(const Column& input, const Column& target, scalar eta = 0.0005);
 
-	void train(const Rows& inputs, const Rows& outputs, scalar eta = 0.0005, size_t epochs = 1);
+	void train(const Rows& inputs, const Rows& outputs, scalar eta = 0.0005, size_t epochs = 1, bool printProgress = false);
 
 	void batchTrain(const Rows& inputs, const Rows& outputs,
 			size_t start, size_t end, scalar eta = 0.0005, size_t epochs = 1);
